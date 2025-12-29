@@ -3,17 +3,18 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { CartProvider } from "@/contexts/cart-context"
+import { Favicon } from "@/components/favicon"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "kidzlori.com",
-  description: "kidzlori.com",
+  title: "setteuno.com",
+  description: "setteuno.com",
   generator: "v0.app",
   icons: {
-    icon: "/rysowane.png",
+    icon: "/Rectangle (1).png",
   },
 }
 
@@ -25,8 +26,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans antialiased`}>
+        <Favicon />
         <CartProvider>
-          {children}
+        {children}
         </CartProvider>
         <Analytics />
       </body>

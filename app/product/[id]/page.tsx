@@ -130,7 +130,7 @@ export default function ProductPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-black py-4">
+      <footer className="bg-transparent py-4">
         <div className="w-full max-w-6xl mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">

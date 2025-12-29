@@ -128,8 +128,10 @@ export const ImageCanvas = forwardRef<HTMLCanvasElement, ImageCanvasProps>(
       const ctx = canvas.getContext("2d", { willReadFrequently: true })
       if (!ctx) return
 
-      const MAX_WIDTH = 720 // Reduced from 1200 to 720 (40% reduction)
-      const MAX_HEIGHT = 480 // Reduced from 800 to 480 (40% reduction)
+      // Responsive sizing for mobile
+      const isMobile = window.innerWidth < 768
+      const MAX_WIDTH = isMobile ? 320 : 720 // Smaller on mobile
+      const MAX_HEIGHT = isMobile ? 213 : 480 // Smaller on mobile
 
       // Calculate scale to fit within both width and height constraints
       const scaleX = MAX_WIDTH / image.width

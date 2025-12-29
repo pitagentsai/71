@@ -1,13 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { ImageCanvas } from "@/components/image-canvas"
 import { Instagram, ShoppingCart } from "lucide-react"
 import Link from "next/link"
 import { CartModal } from "@/components/cart-modal"
 import { useCart } from "@/contexts/cart-context"
 import { MatrixBackground } from "@/components/matrix-background"
-import { ParticleBackground } from "@/components/particle-background"
 
 // Preset values - always use these exact values
 const PRESET_HALFTONE_SIZE = 4
@@ -23,6 +22,8 @@ export default function Home() {
   const [uploadedImage, setUploadedImage] = useState<HTMLImageElement | null>(null)
   const [imageError, setImageError] = useState<string | null>(null)
   const [cartOpen, setCartOpen] = useState(false)
+  const [parallaxOffset, setParallaxOffset] = useState(0)
+  const productsSectionRef = useRef<HTMLElement>(null)
   const { getTotalItems } = useCart()
 
   useEffect(() => {
@@ -38,6 +39,33 @@ export default function Home() {
       setImageError("Failed to load image. Please check the console.")
     }
     img.src = "/1 (9).png"
+  }, [])
+
+  // Parallax effect for products section background
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!productsSectionRef.current) return
+
+      const section = productsSectionRef.current
+      const rect = section.getBoundingClientRect()
+      const windowHeight = window.innerHeight
+      
+      // Calculate how far the section has scrolled into view
+      // When section top is at window top, offset is 0
+      // As we scroll down, offset increases
+      const scrollProgress = (windowHeight - rect.top) / (windowHeight + rect.height)
+      
+      // Apply parallax offset (negative to move up as we scroll down)
+      const offset = scrollProgress * 100 // Adjust multiplier for parallax strength
+      setParallaxOffset(offset)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll() // Initial calculation
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
   // Sample products data - replace with your actual products
@@ -58,11 +86,12 @@ export default function Home() {
           <div className="flex items-center justify-end h-14">
             <button 
               onClick={() => setCartOpen(true)}
-              className="font-mono font-light text-white text-sm tracking-wider hover:opacity-70 transition-opacity flex items-center relative mt-2"
-              style={{ marginRight: '-2rem' }}
+              className="font-mono font-light text-white text-sm tracking-wider hover:opacity-70 transition-opacity flex items-center relative mt-2 mr-4 md:mr-0 md:-mr-8 p-2 -m-2 md:p-0 md:m-0"
               aria-label="Shopping Cart"
             >
-              <ShoppingCart className="w-5 h-5" />
+              <div className="pixelated w-6 h-6 md:w-5 md:h-5 flex items-center justify-center">
+                <ShoppingCart className="w-full h-full" />
+              </div>
               {getTotalItems() > 0 && (
                 <span className="absolute -top-2 -right-2 bg-white text-black text-xs font-mono w-5 h-5 flex items-center justify-center border-2 border-black">
                   {getTotalItems()}
@@ -75,7 +104,6 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="min-h-screen flex items-center justify-center bg-black py-20 pt-24 relative overflow-hidden">
-        <ParticleBackground />
         <MatrixBackground />
         <div className="w-full max-w-4xl mx-auto px-4 relative z-10">
           <div className="flex flex-col items-center">
@@ -83,14 +111,16 @@ export default function Home() {
               <div className="text-red-500">{imageError}</div>
             )}
             {!uploadedImage && !imageError && (
-              <div className="text-white">Loading image...</div>
+              <div className="flex items-center justify-center">
+                <div className="w-12 h-12 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              </div>
             )}
             {uploadedImage && (
               <div className="flex flex-col items-center w-full">
-                <div className="flex justify-center w-full">
-                  <div className="inline-block">
-                    <ImageCanvas
-                      image={uploadedImage}
+                <div className="flex justify-center w-full px-4">
+                  <div className="inline-block max-w-full md:max-w-none" style={{ maxWidth: '90vw' }}>
+                <ImageCanvas
+                  image={uploadedImage}
                       halftoneSize={PRESET_HALFTONE_SIZE}
                       contrast={PRESET_CONTRAST}
                       accentColor={PRESET_ACCENT_COLOR}
@@ -105,7 +135,16 @@ export default function Home() {
                 <button
                   onClick={() => {
                     const productsSection = document.getElementById('products-section')
-                    productsSection?.scrollIntoView({ behavior: 'smooth' })
+                    if (productsSection) {
+                      const rect = productsSection.getBoundingClientRect()
+                      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+                      const elementTop = rect.top + scrollTop
+                      const elementHeight = productsSection.offsetHeight
+                      const windowHeight = window.innerHeight
+                      // Center the section in the viewport
+                      const offset = elementTop - (windowHeight / 2) + (elementHeight / 2)
+                      window.scrollTo({ top: Math.max(0, offset), behavior: 'smooth' })
+                    }
                   }}
                   className="font-mono font-light text-white/40 text-base tracking-[0.3em] hover:text-white/70 transition-colors cursor-pointer mt-16"
                 >
@@ -117,44 +156,85 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Products Section */}
-      <section id="products-section" className="py-20 bg-black relative overflow-hidden">
-        <ParticleBackground />
-        <div className="w-full max-w-6xl mx-auto px-4 relative z-10">
-          <h2 className="text-3xl font-mono font-light text-white mb-12 text-center tracking-wider">
-            PRODUCTS
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product) => (
-              <Link
-                key={product.id}
-                href={`/product/${product.id}`}
-                className="border-2 border-white bg-black p-6 font-mono font-light hover:bg-white hover:text-black transition-all duration-200 cursor-pointer group block"
-              >
-                <div className="space-y-3">
-                  <div className="text-sm tracking-wider text-white group-hover:text-black">
-                    [{String(product.id).padStart(3, '0')}]
-                  </div>
-                  <h3 className="text-xl font-light tracking-wider uppercase text-white group-hover:text-black">
-                    {product.name}
-                  </h3>
-                  <p className="text-sm text-white/70 group-hover:text-black/70">
-                    {product.description}
-                  </p>
-                  <div className="pt-4 border-t border-white group-hover:border-black">
-                    <div className="text-lg font-light tracking-wider text-white group-hover:text-black">
-                      {product.price}
+      {/* Products Section with Extended Background */}
+      <div className="relative overflow-hidden bg-black">
+        {/* Parallax Background Image - Extended to Footer */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: "url('/Rectangle.png')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            transform: `translateY(${parallaxOffset}px)`,
+            willChange: 'transform'
+          }}
+        />
+        {/* Black gradient overlay at top edge */}
+        <div 
+          className="absolute top-0 left-0 right-0 z-0 pointer-events-none"
+          style={{
+            height: '200px',
+            background: 'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0.7) 60%, rgba(0, 0, 0, 0.3) 80%, rgba(0, 0, 0, 0) 100%)',
+          }}
+        />
+        
+        {/* Products Section */}
+        <section 
+          ref={productsSectionRef}
+          id="products-section" 
+          className="py-48 relative z-10"
+        >
+          <div className="w-full max-w-6xl mx-auto px-4">
+            <div className="mb-24 mt-24 text-center flex justify-center">
+              <img 
+                src="/Rectangle (1).png" 
+                alt="Products" 
+                className="h-16 w-auto brightness-0 invert"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-32">
+              {products.map((product) => (
+                <Link
+                  key={product.id}
+                  href={`/product/${product.id}`}
+                  className="p-8 font-mono font-light transition-all duration-300 cursor-pointer group block relative backdrop-blur-md border border-white/30"
+                  style={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)'
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.3)'
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)'
+                  }}
+                >
+                  <div className="space-y-4 relative z-10">
+                    <div className="text-sm tracking-wider text-white">
+                      [{String(product.id).padStart(3, '0')}]
+                    </div>
+                    <h3 className="text-xl font-light tracking-wider uppercase text-white">
+                      {product.name}
+                    </h3>
+                    <p className="text-sm text-white/80">
+                      {product.description}
+                    </p>
+                    <div className="pt-6 border-t border-white/30">
+                      <div className="text-lg font-light tracking-wider text-white">
+                        {product.price}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Footer */}
-      <footer className="bg-black py-4">
+        {/* Footer */}
+        <footer className="bg-transparent py-12 relative z-10">
         <div className="w-full max-w-6xl mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -179,6 +259,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      </div>
 
       <CartModal open={cartOpen} onOpenChange={setCartOpen} />
     </main>
