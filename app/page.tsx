@@ -7,6 +7,8 @@ import Link from "next/link"
 import { CartModal } from "@/components/cart-modal"
 import { useCart } from "@/contexts/cart-context"
 import { MatrixBackground } from "@/components/matrix-background"
+import { Rotator3D } from "@/components/3d-rotator"
+import { TeaserLock } from "@/components/teaser-lock"
 
 // Preset values - always use these exact values
 const PRESET_HALFTONE_SIZE = 4
@@ -23,8 +25,61 @@ export default function Home() {
   const [imageError, setImageError] = useState<string | null>(null)
   const [cartOpen, setCartOpen] = useState(false)
   const [parallaxOffset, setParallaxOffset] = useState(0)
+  const [isUnlocked, setIsUnlocked] = useState(false)
+  const [products, setProducts] = useState<Array<{ id: number; name: string; price: string; description: string }>>([])
+  const [productsLoading, setProductsLoading] = useState(true)
   const productsSectionRef = useRef<HTMLElement>(null)
   const { getTotalItems } = useCart()
+
+  // Check if site is already unlocked (from localStorage)
+  useEffect(() => {
+    const unlocked = localStorage.getItem('siteUnlocked') === 'true'
+    setIsUnlocked(unlocked)
+  }, [])
+
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setProductsLoading(true)
+        const response = await fetch('/api/products')
+        const data = await response.json()
+        
+        console.log('Products API response:', data)
+        
+        if (data.debug) {
+          console.log('API Debug Info:', data.debug)
+          console.log('Response keys:', data.debug.responseKeys)
+          console.log('Raw response sample:', JSON.stringify(data.debug.rawResponse).substring(0, 1000))
+        }
+        
+        if (data.products && Array.isArray(data.products)) {
+          console.log(`Loaded ${data.products.length} products`)
+          setProducts(data.products)
+        } else {
+          console.warn('No products found in response:', data)
+          if (data.error) {
+            console.error('API error:', data.error)
+          }
+          setProducts([])
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error)
+        setProducts([])
+      } finally {
+        setProductsLoading(false)
+      }
+    }
+
+    if (isUnlocked) {
+      fetchProducts()
+    }
+  }, [isUnlocked])
+
+  const handleUnlock = () => {
+    setIsUnlocked(true)
+    localStorage.setItem('siteUnlocked', 'true')
+  }
 
   useEffect(() => {
     const img = new Image()
@@ -68,15 +123,11 @@ export default function Home() {
     }
   }, [])
 
-  // Sample products data - replace with your actual products
-  const products = [
-    { id: 1, name: "PRODUCT_001", price: "$99.00", description: "DESCRIPTION_HERE" },
-    { id: 2, name: "PRODUCT_002", price: "$149.00", description: "DESCRIPTION_HERE" },
-    { id: 3, name: "PRODUCT_003", price: "$79.00", description: "DESCRIPTION_HERE" },
-    { id: 4, name: "PRODUCT_004", price: "$199.00", description: "DESCRIPTION_HERE" },
-    { id: 5, name: "PRODUCT_005", price: "$129.00", description: "DESCRIPTION_HERE" },
-    { id: 6, name: "PRODUCT_006", price: "$89.00", description: "DESCRIPTION_HERE" },
-  ]
+
+  // Show teaser lock if not unlocked
+  if (!isUnlocked) {
+    return <TeaserLock onUnlock={handleUnlock} />
+  }
 
   return (
     <main className="min-h-screen bg-white text-black">
@@ -119,17 +170,19 @@ export default function Home() {
               <div className="flex flex-col items-center w-full">
                 <div className="flex justify-center w-full px-4">
                   <div className="inline-block max-w-full md:max-w-none" style={{ maxWidth: '90vw' }}>
+                    <Rotator3D>
                 <ImageCanvas
                   image={uploadedImage}
-                      halftoneSize={PRESET_HALFTONE_SIZE}
-                      contrast={PRESET_CONTRAST}
-                      accentColor={PRESET_ACCENT_COLOR}
-                      mouseRadius={PRESET_MOUSE_RADIUS}
-                      repulsionStrength={PRESET_REPULSION_STRENGTH}
-                      returnSpeed={PRESET_RETURN_SPEED}
-                      accentProbability={PRESET_ACCENT_PROBABILITY}
-                      sizeVariation={PRESET_SIZE_VARIATION}
-                    />
+                        halftoneSize={PRESET_HALFTONE_SIZE}
+                        contrast={PRESET_CONTRAST}
+                        accentColor={PRESET_ACCENT_COLOR}
+                        mouseRadius={PRESET_MOUSE_RADIUS}
+                        repulsionStrength={PRESET_REPULSION_STRENGTH}
+                        returnSpeed={PRESET_RETURN_SPEED}
+                        accentProbability={PRESET_ACCENT_PROBABILITY}
+                        sizeVariation={PRESET_SIZE_VARIATION}
+                      />
+                    </Rotator3D>
                   </div>
                 </div>
                 <button
@@ -194,7 +247,16 @@ export default function Home() {
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-32">
-              {products.map((product) => (
+              {productsLoading ? (
+                <div className="col-span-full text-center text-white/60 font-mono text-sm tracking-wider py-12">
+                  LOADING PRODUCTS...
+                </div>
+              ) : products.length === 0 ? (
+                <div className="col-span-full text-center text-white/60 font-mono text-sm tracking-wider py-12">
+                  NO PRODUCTS AVAILABLE
+                </div>
+              ) : (
+                products.map((product) => (
                 <Link
                   key={product.id}
                   href={`/product/${product.id}`}
@@ -228,7 +290,8 @@ export default function Home() {
                     </div>
                   </div>
                 </Link>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </section>

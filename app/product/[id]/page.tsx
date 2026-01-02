@@ -1,28 +1,65 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
 import { Instagram, ShoppingCart, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { CartModal } from "@/components/cart-modal"
 import { useCart } from "@/contexts/cart-context"
 
-// Sample products data - should match the data from the main page
-const products = [
-  { id: 1, name: "PRODUCT_001", price: "$99.00", description: "DESCRIPTION_HERE", fullDescription: "FULL_PRODUCT_DESCRIPTION_HERE" },
-  { id: 2, name: "PRODUCT_002", price: "$149.00", description: "DESCRIPTION_HERE", fullDescription: "FULL_PRODUCT_DESCRIPTION_HERE" },
-  { id: 3, name: "PRODUCT_003", price: "$79.00", description: "DESCRIPTION_HERE", fullDescription: "FULL_PRODUCT_DESCRIPTION_HERE" },
-  { id: 4, name: "PRODUCT_004", price: "$199.00", description: "DESCRIPTION_HERE", fullDescription: "FULL_PRODUCT_DESCRIPTION_HERE" },
-  { id: 5, name: "PRODUCT_005", price: "$129.00", description: "DESCRIPTION_HERE", fullDescription: "FULL_PRODUCT_DESCRIPTION_HERE" },
-  { id: 6, name: "PRODUCT_006", price: "$89.00", description: "DESCRIPTION_HERE", fullDescription: "FULL_PRODUCT_DESCRIPTION_HERE" },
-]
+interface Product {
+  id: number
+  name: string
+  price: string
+  description: string
+  fullDescription?: string
+}
 
 export default function ProductPage() {
   const params = useParams()
   const productId = parseInt(params.id as string)
-  const product = products.find(p => p.id === productId)
+  const [product, setProduct] = useState<Product | null>(null)
+  const [loading, setLoading] = useState(true)
   const [cartOpen, setCartOpen] = useState(false)
   const { addToCart, getTotalItems } = useCart()
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch('/api/products')
+        const data = await response.json()
+        
+        if (data.products && Array.isArray(data.products)) {
+          const foundProduct = data.products.find((p: Product) => p.id === productId)
+          if (foundProduct) {
+            setProduct({
+              ...foundProduct,
+              fullDescription: foundProduct.fullDescription || foundProduct.description,
+            })
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProduct()
+  }, [productId])
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-black text-white">
+        <div className="container mx-auto px-4 py-20">
+          <div className="font-mono font-light text-center">
+            <p className="text-xl">LOADING...</p>
+          </div>
+        </div>
+      </main>
+    )
+  }
 
   if (!product) {
     return (

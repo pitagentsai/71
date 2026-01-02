@@ -208,8 +208,7 @@ export const ImageCanvas = forwardRef<HTMLCanvasElement, ImageCanvasProps>(
       dotsRef.current = dots
 
       const animate = () => {
-        ctx.fillStyle = "#000000"
-        ctx.fillRect(0, 0, displayWidth, displayHeight)
+        ctx.clearRect(0, 0, displayWidth, displayHeight)
 
         const timeSinceLastMove = Date.now() - lastMoveTimeRef.current
         const isMouseMoving = timeSinceLastMove < 100
@@ -342,7 +341,7 @@ export const ImageCanvas = forwardRef<HTMLCanvasElement, ImageCanvasProps>(
           className="cursor-crosshair block"
           style={{ 
             display: 'block',
-            backgroundColor: '#000000'
+            backgroundColor: 'transparent'
           }}
         />
       </div>

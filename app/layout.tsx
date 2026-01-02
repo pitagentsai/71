@@ -16,6 +16,25 @@ export const metadata: Metadata = {
   icons: {
     icon: "/Rectangle (1).png",
   },
+  openGraph: {
+    title: "setteuno.com",
+    description: "setteuno.com",
+    type: "website",
+    images: [
+      {
+        url: "/api/og-image",
+        width: 1200,
+        height: 630,
+        alt: "setteuno.com",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "setteuno.com",
+    description: "setteuno.com",
+    images: ["/api/og-image"],
+  },
 }
 
 export default function RootLayout({
