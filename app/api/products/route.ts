@@ -1,93 +1,116 @@
 import { NextResponse } from 'next/server'
 
-const API_KEY = '8b2f564b2f02f1b7449872bab4489020b9e71017b6767a1508892844b51aa6b0'
-const BASE_URL = 'https://api.baselinker.com'
+// Shopify API configuration
+const SHOPIFY_STORE = process.env.SHOPIFY_STORE || 'merchismore.myshopify.com'
+const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN || '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'
+const SHOPIFY_API_VERSION = '2024-10' // Latest stable API version
+
+// Construct Shopify API URL
+const getShopifyUrl = () => {
+  // Ensure the store domain has https:// prefix
+  if (SHOPIFY_STORE.startsWith('http://') || SHOPIFY_STORE.startsWith('https://')) {
+    return SHOPIFY_STORE.replace('http://', 'https://')
+  }
+  return `https://${SHOPIFY_STORE}`
+}
 
 export async function GET() {
   try {
-    // Baselinker API endpoint for getting products
-    const params = new URLSearchParams({
-      method: 'getProducts',
-      parameters: JSON.stringify({})
-    })
+    // Validate store domain format
+    if (!SHOPIFY_STORE || !SHOPIFY_STORE.includes('.myshopify.com')) {
+      return NextResponse.json({
+        products: [],
+        error: 'Invalid Shopify store domain',
+        message: 'SHOPIFY_STORE must be a valid Shopify domain (e.g., your-store.myshopify.com)',
+      }, { status: 200 })
+    }
+
+    const shopUrl = getShopifyUrl()
+    const apiUrl = `${shopUrl}/admin/api/${SHOPIFY_API_VERSION}/products.json?limit=250`
     
-    const response = await fetch(`${BASE_URL}/connector.php`, {
-      method: 'POST',
+    console.log('Fetching products from Shopify:', apiUrl.replace(SHOPIFY_ACCESS_TOKEN, '***'))
+
+    const response = await fetch(apiUrl, {
+      method: 'GET',
       headers: {
-        'X-BLToken': API_KEY,
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN,
+        'Content-Type': 'application/json',
       },
-      body: params.toString(),
       cache: 'no-store',
     })
 
     if (!response.ok) {
-      console.error('API error:', response.status, response.statusText)
+      console.error('Shopify API error:', response.status, response.statusText)
       const errorText = await response.text()
       console.error('Error response:', errorText)
-      return NextResponse.json({ products: [], error: `API error: ${response.status}` }, { status: 200 })
+      let errorMessage = `Shopify API error: ${response.status} ${response.statusText}`
+      
+      try {
+        const errorJson = JSON.parse(errorText)
+        errorMessage = errorJson.errors || errorJson.error || errorMessage
+      } catch {
+        // If not JSON, use the text as is
+      }
+      
+      // Provide helpful error message for 404
+      if (response.status === 404) {
+        errorMessage = 'Store domain not found. Please verify your SHOPIFY_STORE domain is correct (format: your-store.myshopify.com)'
+      }
+      
+      return NextResponse.json({ 
+        products: [], 
+        error: errorMessage,
+        debug: {
+          url: apiUrl.replace(SHOPIFY_ACCESS_TOKEN, '***'),
+          status: response.status,
+          statusText: response.statusText,
+          errorBody: errorText.substring(0, 500),
+          storeDomain: SHOPIFY_STORE,
+        }
+      }, { status: 200 })
     }
 
     const data = await response.json()
-    console.log('Full Baselinker API response:', JSON.stringify(data, null, 2))
+    console.log(`Shopify API response: ${data.products?.length || 0} products found`)
     
-    // Transform the API response
-    // Baselinker API typically returns: { status: "SUCCESS", products: [...] }
-    let products = []
-    
-    // Check for different possible response structures
-    if (data.status === 'SUCCESS' && data.products) {
-      // Handle Baselinker products format - products might be an object with IDs as keys
-      const productList = Array.isArray(data.products) ? data.products : Object.values(data.products)
-      products = productList.map((product: any) => ({
-        id: product.product_id || product.id || parseInt(product.product_id) || 0,
-        name: product.name || product.product_name || product.ean || 'PRODUCT',
-        price: product.price ? `$${parseFloat(product.price).toFixed(2)}` : '$0.00',
-        description: product.description || product.short_description || product.text_fields?.description || 'DESCRIPTION_HERE',
-        image: product.images?.[0]?.url || product.images?.[0] || product.image || product.thumbnail_url,
-        sku: product.sku || product.ean,
-        stock: product.quantity || product.stock,
-      }))
-    } else if (data.status === 'SUCCESS' && data.inventory_products) {
-      // Alternative: inventory_products field
-      const productList = Array.isArray(data.inventory_products) ? data.inventory_products : Object.values(data.inventory_products)
-      products = productList.map((product: any) => ({
-        id: product.product_id || product.id || parseInt(product.product_id) || 0,
-        name: product.name || product.product_name || product.ean || 'PRODUCT',
-        price: product.price ? `$${parseFloat(product.price).toFixed(2)}` : '$0.00',
-        description: product.description || product.short_description || 'DESCRIPTION_HERE',
-        image: product.images?.[0]?.url || product.images?.[0] || product.image,
-        sku: product.sku || product.ean,
-        stock: product.quantity || product.stock,
-      }))
-    } else if (data.products && Array.isArray(data.products)) {
-      products = data.products.map((product: any) => ({
-        id: product.product_id || product.id || parseInt(product.product_id) || 0,
-        name: product.name || product.product_name || 'PRODUCT',
-        price: product.price ? `$${parseFloat(product.price).toFixed(2)}` : '$0.00',
-        description: product.description || product.short_description || 'DESCRIPTION_HERE',
-        image: product.images?.[0]?.url || product.images?.[0] || product.image,
-        sku: product.sku,
-        stock: product.quantity || product.stock,
-      }))
-    } else if (Array.isArray(data)) {
-      products = data.map((product: any) => ({
-        id: product.product_id || product.id || parseInt(product.product_id) || 0,
-        name: product.name || product.product_name || 'PRODUCT',
-        price: product.price ? `$${parseFloat(product.price).toFixed(2)}` : '$0.00',
-        description: product.description || product.short_description || 'DESCRIPTION_HERE',
-        image: product.images?.[0]?.url || product.images?.[0] || product.image,
-        sku: product.sku,
-        stock: product.quantity || product.stock,
-      }))
-    }
+    // Transform Shopify products to our format
+    const products = (data.products || []).map((product: any) => {
+      // Get the first variant for price
+      const variant = product.variants?.[0]
+      const price = variant?.price ? parseFloat(variant.price) : 0
+      
+      // Get the first image
+      const image = product.images?.[0]?.src || product.image?.src || null
+      
+      // Get product description (HTML or plain text)
+      const description = product.body_html || product.description || 'DESCRIPTION_HERE'
+      
+      return {
+        id: product.id || 0,
+        name: product.title || 'PRODUCT',
+        price: price > 0 ? `$${price.toFixed(2)}` : '$0.00',
+        description: description.replace(/<[^>]*>/g, '').substring(0, 200) || 'DESCRIPTION_HERE', // Strip HTML and limit length
+        image: image,
+        sku: variant?.sku || product.variants?.[0]?.sku || '',
+        stock: variant?.inventory_quantity || product.variants?.[0]?.inventory_quantity || 0,
+        handle: product.handle, // Shopify product handle for URLs
+        variants: product.variants?.map((v: any) => ({
+          id: v.id,
+          price: parseFloat(v.price),
+          title: v.title,
+          inventory_quantity: v.inventory_quantity,
+        })) || [],
+      }
+    })
 
-    console.log(`Fetched ${products.length} products`)
-    console.log('Response structure keys:', Object.keys(data))
-    return NextResponse.json({ products, debug: { rawResponse: data, responseKeys: Object.keys(data) } })
+    console.log(`Successfully transformed ${products.length} products`)
+    return NextResponse.json({ products })
   } catch (error) {
-    console.error('Error fetching products:', error)
-    return NextResponse.json({ products: [], error: error instanceof Error ? error.message : 'Unknown error' }, { status: 200 })
+    console.error('Error fetching products from Shopify:', error)
+    return NextResponse.json({ 
+      products: [], 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    }, { status: 200 })
   }
 }
 

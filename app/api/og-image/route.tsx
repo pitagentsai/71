@@ -16,8 +16,8 @@ export default async function Image() {
     const logoPath = join(process.cwd(), 'public', 'Rectangle (1).png')
     const logoBuffer = await readFile(logoPath)
     const logoBase64 = logoBuffer.toString('base64')
-    const logoDataUrl = `data:image/png;base64,${logoBase64}`
-
+    
+    // ImageResponse supports base64 images via data URLs in backgroundImage
     return new ImageResponse(
       (
         <div
@@ -28,14 +28,13 @@ export default async function Image() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            position: 'relative',
           }}
         >
           <div
             style={{
               width: '600px',
               height: '400px',
-              backgroundImage: `url(${logoDataUrl})`,
+              backgroundImage: `url(data:image/png;base64,${logoBase64})`,
               backgroundSize: 'contain',
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
@@ -61,8 +60,10 @@ export default async function Image() {
             alignItems: 'center',
             justifyContent: 'center',
             color: '#FFFFFF',
-            fontSize: '64px',
+            fontSize: '72px',
             fontFamily: 'monospace',
+            fontWeight: '300',
+            letterSpacing: '0.1em',
           }}
         >
           setteuno.com

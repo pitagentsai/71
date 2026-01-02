@@ -4,6 +4,8 @@ import { X, Plus, Minus, Trash2 } from "lucide-react"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { useCart } from "@/contexts/cart-context"
 
+const SHOPIFY_STORE = process.env.NEXT_PUBLIC_SHOPIFY_STORE || 'merchismore.myshopify.com'
+
 interface CartModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -99,7 +101,10 @@ export function CartModal({ open, onOpenChange }: CartModalProps) {
                 CLEAR CART
               </button>
               <button
-                onClick={() => onOpenChange(false)}
+                onClick={() => {
+                  // Redirect to Shopify checkout
+                  window.location.href = `https://${SHOPIFY_STORE}/cart`
+                }}
                 className="flex-1 border-2 border-white bg-black text-white font-mono font-light text-sm tracking-wider py-3 hover:bg-white hover:text-black transition-all duration-200 uppercase"
               >
                 CHECKOUT

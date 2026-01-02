@@ -274,15 +274,22 @@ export default function Home() {
                   }}
                 >
                   <div className="space-y-4 relative z-10">
+                    {/* Product Image */}
+                    {product.image && (
+                      <div className="w-full aspect-square overflow-hidden mb-4">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
                     <div className="text-sm tracking-wider text-white">
                       [{String(product.id).padStart(3, '0')}]
                     </div>
                     <h3 className="text-xl font-light tracking-wider uppercase text-white">
                       {product.name}
                     </h3>
-                    <p className="text-sm text-white/80">
-                      {product.description}
-                    </p>
                     <div className="pt-6 border-t border-white/30">
                       <div className="text-lg font-light tracking-wider text-white">
                         {product.price}

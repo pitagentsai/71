@@ -126,7 +126,13 @@ export function TeaserLock({ onUnlock }: TeaserLockProps) {
       <div className="text-center px-4 max-w-md w-full relative z-10">
         {/* Countdown */}
         <div className="mb-12">
-          <h1 className="text-white font-mono text-2xl mb-8 tracking-wider">COMING SOON</h1>
+          <div className="mb-8 flex justify-center">
+            <img
+              src="/Rectangle (1).png"
+              alt="setteuno"
+              className="h-16 w-auto brightness-0 invert"
+            />
+          </div>
           <div className="grid grid-cols-4 gap-4">
             <div className="text-center">
               <div className="text-white font-mono text-3xl font-light">{String(timeLeft.days).padStart(2, '0')}</div>
