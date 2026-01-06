@@ -4,7 +4,7 @@ import { X, Plus, Minus, Trash2 } from "lucide-react"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { useCart } from "@/contexts/cart-context"
 
-const SHOPIFY_CHECKOUT_URL = process.env.NEXT_PUBLIC_SHOPIFY_CHECKOUT_URL || 'https://merchismore.myshopify.com/cart'
+const SHOPIFY_CHECKOUT_URL = process.env.NEXT_PUBLIC_SHOPIFY_CHECKOUT_URL || 'https://qyavex-ue.myshopify.com/cart'
 
 interface CartModalProps {
   open: boolean

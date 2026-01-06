@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
 
-const SHOPIFY_STORE = process.env.SHOPIFY_STORE || 'merchismore.myshopify.com'
+const SHOPIFY_STORE = process.env.SHOPIFY_STORE || 'qyavex-ue.myshopify.com'
 const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN || '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'
-const SHOPIFY_STOREFRONT_ACCESS_TOKEN = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN || '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'
-const SHOPIFY_API_VERSION = '2024-10'
+const SHOPIFY_STOREFRONT_ACCESS_TOKEN = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN || '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'
+const SHOPIFY_API_VERSION = '2025-10'
 
 // GraphQL mutation to create a checkout
 const CREATE_CHECKOUT_MUTATION = `
@@ -110,8 +110,8 @@ export async function POST(request: Request) {
     let storeDomain = SHOPIFY_STORE
     if (!storeDomain.includes('.myshopify.com')) {
       // If it's a custom domain, try to extract or use the myshopify.com version
-      // For now, assume it's merchismore.myshopify.com
-      storeDomain = 'merchismore.myshopify.com'
+      // Default to qyavex-ue.myshopify.com
+      storeDomain = 'qyavex-ue.myshopify.com'
     }
     
     const shopUrl = storeDomain.startsWith('http') 

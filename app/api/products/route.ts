@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
 
 // Shopify API configuration
-const SHOPIFY_STORE = process.env.SHOPIFY_STORE || 'merchismore.myshopify.com'
+const SHOPIFY_STORE = process.env.SHOPIFY_STORE || 'qyavex-ue.myshopify.com'
 const SHOPIFY_ACCESS_TOKEN = process.env.SHOPIFY_ACCESS_TOKEN || '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'
-const SHOPIFY_API_VERSION = '2024-10' // Latest stable API version
+const SHOPIFY_API_VERSION = '2025-10' // Latest stable API version
 
 // Construct Shopify API URL
 const getShopifyUrl = () => {
@@ -16,9 +16,6 @@ const getShopifyUrl = () => {
 
 export async function GET() {
   try {
-    // Temporarily hide all products for this deploy
-    return NextResponse.json({ products: [] }, { status: 200 })
-    
     // Validate store domain format
     if (!SHOPIFY_STORE || !SHOPIFY_STORE.includes('.myshopify.com')) {
       return NextResponse.json({

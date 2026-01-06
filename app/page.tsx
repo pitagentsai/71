@@ -64,8 +64,12 @@ export default function Home() {
         
         if (data.debug) {
           console.log('API Debug Info:', data.debug)
-          console.log('Response keys:', data.debug.responseKeys)
-          console.log('Raw response sample:', JSON.stringify(data.debug.rawResponse).substring(0, 1000))
+          if (data.debug.responseKeys) {
+            console.log('Response keys:', data.debug.responseKeys)
+          }
+          if (data.debug.rawResponse) {
+            console.log('Raw response sample:', JSON.stringify(data.debug.rawResponse).substring(0, 1000))
+          }
         }
         
         if (data.products && Array.isArray(data.products)) {
