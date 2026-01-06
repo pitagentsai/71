@@ -13,7 +13,7 @@ import { EffectControls } from "@/components/effect-controls"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 // Preset values - initial defaults
-const PRESET_HALFTONE_SIZE = 3
+const PRESET_HALFTONE_SIZE = 2
 const PRESET_CONTRAST = 1.5
 const PRESET_ACCENT_COLOR = "#ffffff"
 const PRESET_MOUSE_RADIUS = 80

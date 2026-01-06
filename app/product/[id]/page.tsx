@@ -14,6 +14,7 @@ interface Product {
   description: string
   fullDescription?: string
   image?: string | null
+  variants?: Array<{ id: number }>
 }
 
 export default function ProductPage() {
@@ -163,7 +164,16 @@ export default function ProductPage() {
                 <button 
                   onClick={() => {
                     if (product) {
-                      addToCart({ id: product.id, name: product.name, price: product.price })
+                      // Get first variant ID and convert to GID format for Storefront API
+                      const variantId = product.variants?.[0]?.id 
+                        ? `gid://shopify/ProductVariant/${product.variants[0].id}`
+                        : undefined
+                      addToCart({ 
+                        id: product.id, 
+                        name: product.name, 
+                        price: product.price,
+                        variantId 
+                      })
                       setCartOpen(true)
                     }
                   }}

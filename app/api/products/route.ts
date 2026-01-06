@@ -16,7 +16,7 @@ const getShopifyUrl = () => {
 
 export async function GET() {
   try {
-    // Products are temporarily hidden
+    // Temporarily hide all products for this deploy
     return NextResponse.json({ products: [] }, { status: 200 })
     
     // Validate store domain format

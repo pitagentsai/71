@@ -102,9 +102,36 @@ export function CartModal({ open, onOpenChange }: CartModalProps) {
                 CLEAR CART
               </button>
               <button
-                onClick={() => {
-                  // Redirect to custom Shopify checkout page
-                  window.location.href = SHOPIFY_CHECKOUT_URL
+                onClick={async () => {
+                  try {
+                    // Create checkout via Storefront API
+                    const response = await fetch('/api/checkout', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        items: cartItems.map(item => ({
+                          id: item.id,
+                          variantId: item.variantId || `gid://shopify/ProductVariant/${item.id}`, // Use stored variant ID or fallback
+                          quantity: item.quantity,
+                        })),
+                      }),
+                    })
+
+                    const data = await response.json()
+                    
+                    if (data.checkoutUrl) {
+                      window.location.href = data.checkoutUrl
+                    } else {
+                      // Fallback to cart URL
+                      window.location.href = SHOPIFY_CHECKOUT_URL
+                    }
+                  } catch (error) {
+                    console.error('Error creating checkout:', error)
+                    // Fallback to cart URL
+                    window.location.href = SHOPIFY_CHECKOUT_URL
+                  }
                 }}
                 className="flex-1 border-2 border-white bg-black text-white font-mono font-light text-sm tracking-wider py-3 hover:bg-white hover:text-black transition-all duration-200 uppercase"
               >
