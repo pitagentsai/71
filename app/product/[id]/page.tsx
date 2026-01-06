@@ -191,7 +191,7 @@ export default function ProductPage() {
             <div className="flex items-center gap-6 font-mono font-light text-white text-sm tracking-wider">
               <span>© 2026</span>
               <a 
-                href="https://instagram.com" 
+                href="https://www.instagram.com/sette71uno/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:opacity-70 transition-opacity"

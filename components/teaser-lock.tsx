@@ -119,7 +119,7 @@ export function TeaserLock({ onUnlock }: TeaserLockProps) {
             <img
               src="/Rectangle (1).png"
               alt="setteuno"
-              className="h-16 w-auto brightness-0 invert"
+              className="h-24 md:h-32 w-auto brightness-0 invert"
             />
           </div>
           <div className="grid grid-cols-4 gap-4">

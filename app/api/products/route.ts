@@ -16,6 +16,9 @@ const getShopifyUrl = () => {
 
 export async function GET() {
   try {
+    // Products are temporarily hidden
+    return NextResponse.json({ products: [] }, { status: 200 })
+    
     // Validate store domain format
     if (!SHOPIFY_STORE || !SHOPIFY_STORE.includes('.myshopify.com')) {
       return NextResponse.json({
@@ -73,8 +76,16 @@ export async function GET() {
     const data = await response.json()
     console.log(`Shopify API response: ${data.products?.length || 0} products found`)
     
+    // Filter out hidden/draft/archived products - only show active, published products
+    const visibleProducts = (data.products || []).filter((product: any) => {
+      // Exclude draft, archived products, and products without published_at
+      return product.status === 'active' && product.published_at !== null
+    })
+    
+    console.log(`Filtered to ${visibleProducts.length} visible products (excluded ${(data.products?.length || 0) - visibleProducts.length} hidden products)`)
+    
     // Transform Shopify products to our format
-    const products = (data.products || []).map((product: any) => {
+    const products = visibleProducts.map((product: any) => {
       // Get the first variant for price
       const variant = product.variants?.[0]
       const price = variant?.price ? parseFloat(variant.price) : 0
