@@ -13,22 +13,12 @@ export function TeaserLock({ onUnlock }: TeaserLockProps) {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null)
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
   })
-
-  // Load the particle image for background
-  useEffect(() => {
-    const img = new Image()
-    img.onload = () => {
-      setBackgroundImage(img)
-    }
-    img.src = "/1 (9).png"
-  }, [])
 
   // Set countdown target date to March 1st, 2026
   useEffect(() => {
@@ -71,6 +61,7 @@ export function TeaserLock({ onUnlock }: TeaserLockProps) {
 
     setIsSubmitting(true)
     try {
+      console.log('Submitting email:', email)
       const response = await fetch('/api/newsletter', {
         method: 'POST',
         headers: {
@@ -79,17 +70,31 @@ export function TeaserLock({ onUnlock }: TeaserLockProps) {
         body: JSON.stringify({ email }),
       })
 
-      const data = await response.json()
+      console.log('Response status:', response.status)
+      console.log('Response ok:', response.ok)
+
+      let data
+      try {
+        data = await response.json()
+        console.log('Response data:', data)
+      } catch (jsonError) {
+        console.error('Failed to parse response JSON:', jsonError)
+        const text = await response.text()
+        console.error('Response text:', text)
+        setError("Server error: Invalid response format")
+        setIsSubmitting(false)
+        return
+      }
 
       if (response.ok && data.success) {
-        setSuccess(data.message || "Thank you! You'll be notified when we launch.")
+        setSuccess(data.message || "Thank you for showing interest in ENEMY CORP. You will be 71.")
         setEmail("") // Clear the email field
       } else {
-        setError(data.error || "Failed to sign up. Please try again.")
+        setError(data.error || data.details || "Failed to sign up. Please try again.")
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting email:', error)
-      setError("Something went wrong. Please try again.")
+      setError(error.message || "Something went wrong. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -107,22 +112,6 @@ export function TeaserLock({ onUnlock }: TeaserLockProps) {
 
   return (
     <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden">
-      {/* Blurred particle image background */}
-      <div 
-        className="absolute inset-0 w-full h-full"
-        style={{
-          backgroundImage: "url('/1 (9).png')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          filter: 'blur(20px)',
-          transform: 'scale(1.2)',
-          pointerEvents: 'none',
-        }}
-      />
-      {/* Dark overlay for better text readability */}
-      <div className="absolute inset-0 bg-black/50" />
-      
       <div className="text-center px-4 max-w-md w-full relative z-10">
         {/* Countdown */}
         <div className="mb-12">

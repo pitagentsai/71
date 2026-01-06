@@ -130,8 +130,8 @@ export const ImageCanvas = forwardRef<HTMLCanvasElement, ImageCanvasProps>(
 
       // Responsive sizing for mobile
       const isMobile = window.innerWidth < 768
-      const MAX_WIDTH = isMobile ? 320 : 720 // Smaller on mobile
-      const MAX_HEIGHT = isMobile ? 213 : 480 // Smaller on mobile
+      const MAX_WIDTH = isMobile ? Math.min(window.innerWidth * 0.95, 600) : 720 // Much larger on mobile
+      const MAX_HEIGHT = isMobile ? Math.min(window.innerHeight * 0.6, 800) : 480 // Much larger on mobile
 
       // Calculate scale to fit within both width and height constraints
       const scaleX = MAX_WIDTH / image.width
@@ -178,7 +178,7 @@ export const ImageCanvas = forwardRef<HTMLCanvasElement, ImageCanvasProps>(
           const i = (sampleY * canvas.width + sampleX) * 4
           const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3
 
-          const dotSize = (brightness / 255) * adjustedHalftoneSize * 0.9
+          const dotSize = (brightness / 255) * adjustedHalftoneSize * 0.6
 
           if (dotSize > 0.5) {
             const centerX = x + adjustedHalftoneSize / 2
@@ -225,77 +225,15 @@ export const ImageCanvas = forwardRef<HTMLCanvasElement, ImageCanvasProps>(
         const fadeOutFactor = 1
 
         dots.forEach((dot) => {
-          let maxDistanceFactor = 0
-          let totalForceX = 0
-          let totalForceY = 0
-
-          if (mouseTrailRef.current.length > 0 && fadeOutFactor > 0.01) {
-            mouseTrailRef.current.forEach((trailPoint) => {
-              const dx = trailPoint.x - dot.x
-              const dy = trailPoint.y - dot.y
-              const distance = Math.sqrt(dx * dx + dy * dy)
-
-              if (distance > mouseRadius * 1.5) return
-
-              const noiseValue = smoothNoise(dot.baseX, dot.baseY, 0.02, time)
-              const irregularRadius = mouseRadius * (0.7 + noiseValue * 0.6)
-
-              if (distance < irregularRadius) {
-                const distanceFactor = 1 - distance / irregularRadius
-                const smoothFactor = distanceFactor * distanceFactor * (3 - 2 * distanceFactor)
-                maxDistanceFactor = Math.max(maxDistanceFactor, smoothFactor)
-
-                if (distance > 0.1) {
-                  const force = repulsionStrength * smoothFactor * trailPoint.strength * 0.5 * fadeOutFactor
-                  totalForceX -= (dx / distance) * force
-                  totalForceY -= (dy / distance) * force
-                }
-              }
-            })
-          }
-
-          let isTwinkling = false
-          if (mouseRef.current.x > 0) {
-            const dx = mouseRef.current.x - dot.x
-            const dy = mouseRef.current.y - dot.y
-            const distance = Math.sqrt(dx * dx + dy * dy)
-
-            const noiseValue = smoothNoise(dot.baseX, dot.baseY, 0.02, time)
-            const irregularRadius = mouseRadius * (0.7 + noiseValue * 0.6)
-
-            if (distance < irregularRadius) {
-              const distanceFactor = 1 - distance / irregularRadius
-              const smoothFactor = distanceFactor * distanceFactor * (3 - 2 * distanceFactor)
-              maxDistanceFactor = Math.max(maxDistanceFactor, smoothFactor)
-              isTwinkling = true
-            }
-          }
-
-          dot.vx += totalForceX
-          dot.vy += totalForceY
-
-          const returnForceX = (dot.baseX - dot.x) * returnSpeed * 0.1
-          const returnForceY = (dot.baseY - dot.y) * returnSpeed * 0.1
-          dot.vx += returnForceX
-          dot.vy += returnForceY
-
-          dot.vx *= 0.85
-          dot.vy *= 0.85
-
-          dot.x += dot.vx
-          dot.y += dot.vy
+          // Keep particles at their base positions - no mouse interaction
+          dot.x = dot.baseX
+          dot.y = dot.baseY
+          dot.vx = 0
+          dot.vy = 0
 
           const currentSize = dot.baseSize * dot.sizeMultiplier
 
-          let opacity = 1
-          if (maxDistanceFactor > 0) {
-            dot.twinklePhase += dot.twinkleSpeed
-            const twinkle = Math.sin(dot.twinklePhase) * 0.5 + 0.5
-            const twinkleAmount = (0.3 + twinkle * 0.7) * maxDistanceFactor * fadeOutFactor
-            opacity = 1 - (1 - twinkleAmount) * maxDistanceFactor * fadeOutFactor
-          }
-
-          ctx.globalAlpha = opacity
+          ctx.globalAlpha = 1
           ctx.fillStyle = dot.isAccent ? accentColor : "#ffffff"
 
           ctx.beginPath()
@@ -309,17 +247,12 @@ export const ImageCanvas = forwardRef<HTMLCanvasElement, ImageCanvasProps>(
 
       animate()
 
-      canvas.addEventListener("mousemove", handleMouseMove)
-      canvas.addEventListener("mouseenter", handleMouseEnter)
-      canvas.addEventListener("mouseleave", handleMouseLeave)
+      // Mouse event listeners removed - no interaction
 
       return () => {
         if (animationFrameRef.current) {
           cancelAnimationFrame(animationFrameRef.current)
         }
-        canvas.removeEventListener("mousemove", handleMouseMove)
-        canvas.removeEventListener("mouseenter", handleMouseEnter)
-        canvas.removeEventListener("mouseleave", handleMouseLeave)
       }
     }, [
       image,
@@ -335,13 +268,14 @@ export const ImageCanvas = forwardRef<HTMLCanvasElement, ImageCanvasProps>(
     ])
 
     return (
-      <div className="inline-block">
+      <div className="flex justify-center items-center w-full">
         <canvas 
           ref={canvasRef} 
-          className="cursor-crosshair block"
+          className="block mx-auto"
           style={{ 
             display: 'block',
-            backgroundColor: 'transparent'
+            backgroundColor: 'transparent',
+            margin: '0 auto'
           }}
         />
       </div>

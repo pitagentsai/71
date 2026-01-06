@@ -13,6 +13,7 @@ interface Product {
   price: string
   description: string
   fullDescription?: string
+  image?: string | null
 }
 
 export default function ProductPage() {
@@ -119,9 +120,19 @@ export default function ProductPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
             {/* Product Image - Left Side */}
             <div className="w-full">
-              <div className="aspect-square bg-white/10 border-2 border-white flex items-center justify-center">
-                <span className="text-white/50 text-sm tracking-wider">IMAGE_PLACEHOLDER</span>
-              </div>
+              {product.image ? (
+                <div className="aspect-square border-2 border-white overflow-hidden">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="aspect-square bg-white/10 border-2 border-white flex items-center justify-center">
+                  <span className="text-white/50 text-sm tracking-wider">NO IMAGE</span>
+                </div>
+              )}
             </div>
 
             {/* Product Info - Right Side */}

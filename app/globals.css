@@ -130,3 +130,77 @@
   image-rendering: crisp-edges;
   filter: contrast(1.4) brightness(1.05);
 }
+
+/* Fixed map background - no animations or transitions */
+.map-bg-fixed {
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
+}
+
+/* Glitch effect on load */
+.glitch-on-load {
+  position: relative;
+  animation: glitch-flicker 0.15s ease-in-out;
+  overflow: visible;
+}
+
+.glitch-on-load > * {
+  position: relative;
+  animation: glitch-split 0.15s ease-in-out;
+  will-change: transform, clip-path;
+}
+
+@keyframes glitch-flicker {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1) contrast(1);
+  }
+  20% {
+    opacity: 0.85;
+    filter: brightness(1.3) contrast(1.2);
+  }
+  40% {
+    opacity: 1;
+    filter: brightness(0.9) contrast(1.15);
+  }
+  60% {
+    opacity: 0.9;
+    filter: brightness(1.2) contrast(1.1);
+  }
+  80% {
+    opacity: 1;
+    filter: brightness(0.95) contrast(1.05);
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1) contrast(1);
+  }
+}
+
+@keyframes glitch-split {
+  0%, 100% {
+    transform: translateX(0) translateY(0);
+    clip-path: inset(0 0 0 0);
+  }
+  20% {
+    transform: translateX(-3px) translateY(0);
+    clip-path: inset(0 0 47% 0);
+  }
+  40% {
+    transform: translateX(3px) translateY(0);
+    clip-path: inset(47% 0 0 0);
+  }
+  60% {
+    transform: translateX(-2px) translateY(0);
+    clip-path: inset(0 0 48% 0);
+  }
+  80% {
+    transform: translateX(2px) translateY(0);
+    clip-path: inset(48% 0 0 0);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+    clip-path: inset(0 0 0 0);
+  }
+}

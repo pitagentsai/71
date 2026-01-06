@@ -8,7 +8,7 @@ export function Favicon() {
     const existingLinks = document.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]')
     existingLinks.forEach(link => link.remove())
 
-    // Create favicon using Rectangle (1).png - resize to make it smaller
+    // Create favicon using favicon_2.png - resize to make it smaller
     const link = document.createElement('link')
     link.rel = 'icon'
     link.type = 'image/png'
@@ -34,10 +34,10 @@ export function Favicon() {
     }
     img.onerror = () => {
       // Fallback to original
-      link.href = '/Rectangle (1).png'
+      link.href = '/favicon_2.png'
       document.head.appendChild(link)
     }
-    img.src = '/Rectangle (1).png'
+    img.src = '/favicon_2.png'
   }, [])
 
   return null

@@ -1,10 +1,10 @@
 "use client"
 
 import { X, Plus, Minus, Trash2 } from "lucide-react"
-import { Sheet, SheetContent } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { useCart } from "@/contexts/cart-context"
 
-const SHOPIFY_STORE = process.env.NEXT_PUBLIC_SHOPIFY_STORE || 'merchismore.myshopify.com'
+const SHOPIFY_CHECKOUT_URL = process.env.NEXT_PUBLIC_SHOPIFY_CHECKOUT_URL || 'https://merchismore.myshopify.com/cart'
 
 interface CartModalProps {
   open: boolean
@@ -20,6 +20,7 @@ export function CartModal({ open, onOpenChange }: CartModalProps) {
         side="right"
         className="bg-black border-l-2 border-white text-white font-mono font-light w-full sm:max-w-md p-0 flex flex-col [&>button]:text-white [&>button]:hover:text-black [&>button]:hover:bg-white [&>button]:border-2 [&>button]:border-white [&>button]:absolute [&>button]:top-4 [&>button]:right-4"
       >
+        <SheetTitle className="sr-only">Shopping Cart</SheetTitle>
         <div className="flex justify-center pt-6 pb-4">
           <img 
             src="/rysowane.png" 
@@ -102,8 +103,8 @@ export function CartModal({ open, onOpenChange }: CartModalProps) {
               </button>
               <button
                 onClick={() => {
-                  // Redirect to Shopify checkout
-                  window.location.href = `https://${SHOPIFY_STORE}/cart`
+                  // Redirect to custom Shopify checkout page
+                  window.location.href = SHOPIFY_CHECKOUT_URL
                 }}
                 className="flex-1 border-2 border-white bg-black text-white font-mono font-light text-sm tracking-wider py-3 hover:bg-white hover:text-black transition-all duration-200 uppercase"
               >

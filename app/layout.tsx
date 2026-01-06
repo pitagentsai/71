@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: "setteuno.com",
   generator: "v0.app",
   icons: {
-    icon: "/Rectangle (1).png",
+    icon: "/favicon_2.png",
   },
   openGraph: {
     title: "setteuno.com",
