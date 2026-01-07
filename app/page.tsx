@@ -215,7 +215,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center bg-black py-12 md:py-20 pt-20 md:pt-24 relative overflow-hidden">
+      <section className="min-h-screen flex items-center justify-center bg-black py-12 md:py-20 pt-12 md:pt-24 relative overflow-hidden">
         <MatrixBackground />
         {/* Fixed Map Background - Above Matrix - Stays locked to viewport */}
         <div 
@@ -249,7 +249,7 @@ export default function Home() {
               </div>
             )}
             {uploadedImage && (
-              <div className="flex flex-col items-center justify-center w-full">
+              <div className="flex flex-col items-center justify-center w-full -mt-8 md:mt-0">
                 <div className="flex justify-center items-center w-full overflow-hidden">
                   <div className={`flex justify-center items-center w-full ${showGlitch ? 'glitch-on-load' : ''}`} style={{ maxWidth: '100vw' }}>
                     <Rotator3D>
