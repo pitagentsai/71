@@ -2,7 +2,6 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
-import { CartProvider } from "@/contexts/cart-context"
 import { Favicon } from "@/components/favicon"
 import "./globals.css"
 
@@ -43,12 +42,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`font-sans antialiased`}>
+    <html lang="en" className="overflow-hidden">
+      <body className={`font-sans antialiased overflow-hidden`}>
         <Favicon />
-        <CartProvider>
         {children}
-        </CartProvider>
         <Analytics />
       </body>
     </html>
