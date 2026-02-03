@@ -20,11 +20,11 @@ export function TeaserLock({ onUnlock }: TeaserLockProps) {
     seconds: 0,
   })
 
-  // Set countdown target date to February 5th, 2026 at midnight Warsaw, Poland time
+  // Set countdown target date to February 6th, 2026 at midnight Warsaw, Poland time (Friday)
   useEffect(() => {
-    // Warsaw is UTC+1 in February (CET), so midnight Warsaw = 23:00 UTC on Feb 4
-    // Create date for February 5, 2026 00:00:00 Warsaw time = February 4, 2026 23:00:00 UTC
-    const targetDate = new Date('2026-02-04T23:00:00Z') // UTC time equivalent to Feb 5 midnight Warsaw
+    // Warsaw is UTC+1 in February (CET), so midnight Warsaw = 23:00 UTC on Feb 5
+    // Create date for February 6, 2026 00:00:00 Warsaw time = February 5, 2026 23:00:00 UTC
+    const targetDate = new Date('2026-02-05T23:00:00Z') // UTC time equivalent to Feb 6 midnight Warsaw
     const targetTime = targetDate.getTime()
 
     const updateCountdown = () => {
