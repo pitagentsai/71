@@ -128,10 +128,10 @@ export const ImageCanvas = forwardRef<HTMLCanvasElement, ImageCanvasProps>(
       const ctx = canvas.getContext("2d", { willReadFrequently: true })
       if (!ctx) return
 
-      // Responsive sizing for mobile
+      // Responsive sizing - small canvas for navbar
       const isMobile = window.innerWidth < 768
-      const MAX_WIDTH = isMobile ? Math.min(window.innerWidth * 0.95, 600) : 720 // Much larger on mobile
-      const MAX_HEIGHT = isMobile ? Math.min(window.innerHeight * 0.6, 800) : 480 // Much larger on mobile
+      const MAX_WIDTH = isMobile ? 50 : 60
+      const MAX_HEIGHT = isMobile ? 50 : 60
 
       // Calculate scale to fit within both width and height constraints
       const scaleX = MAX_WIDTH / image.width

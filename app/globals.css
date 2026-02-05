@@ -204,3 +204,93 @@
     clip-path: inset(0 0 0 0);
   }
 }
+
+/* Glitch Text Effect - Triggered by JS */
+.glitch-hover {
+  position: relative;
+}
+
+.glitch-hover.glitching {
+  animation: shop-glitch-burst 0.15s ease-in-out;
+}
+
+.glitch-hover::before,
+.glitch-hover::after {
+  content: 'SHOP';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: #ffffff !important;
+  background: transparent !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.glitch-hover.glitching::before {
+  opacity: 1;
+  animation: shop-glitch-top-burst 0.15s ease-in-out;
+}
+
+.glitch-hover.glitching::after {
+  opacity: 1;
+  animation: shop-glitch-bottom-burst 0.15s ease-in-out;
+}
+
+@keyframes shop-glitch-burst {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1) contrast(1);
+  }
+  25% {
+    opacity: 0.85;
+    filter: brightness(1.3) contrast(1.2);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(0.9) contrast(1.15);
+  }
+  75% {
+    opacity: 0.9;
+    filter: brightness(1.2) contrast(1.1);
+  }
+}
+
+@keyframes shop-glitch-top-burst {
+  0%, 100% {
+    transform: translateX(0);
+    clip-path: inset(0 0 50% 0);
+  }
+  25% {
+    transform: translateX(-4px);
+    clip-path: inset(0 0 55% 0);
+  }
+  50% {
+    transform: translateX(4px);
+    clip-path: inset(0 0 45% 0);
+  }
+  75% {
+    transform: translateX(-3px);
+    clip-path: inset(0 0 52% 0);
+  }
+}
+
+@keyframes shop-glitch-bottom-burst {
+  0%, 100% {
+    transform: translateX(0);
+    clip-path: inset(50% 0 0 0);
+  }
+  25% {
+    transform: translateX(4px);
+    clip-path: inset(45% 0 0 0);
+  }
+  50% {
+    transform: translateX(-4px);
+    clip-path: inset(55% 0 0 0);
+  }
+  75% {
+    transform: translateX(3px);
+    clip-path: inset(48% 0 0 0);
+  }
+}

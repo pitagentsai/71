@@ -27,6 +27,8 @@ export function TeaserLock({ onUnlock }: TeaserLockProps) {
     const targetDate = new Date('2026-02-05T23:00:00Z') // UTC time equivalent to Feb 6 midnight Warsaw
     const targetTime = targetDate.getTime()
 
+    let interval: NodeJS.Timeout | null = null
+
     const updateCountdown = () => {
       const now = new Date().getTime()
       const difference = targetTime - now
@@ -39,15 +41,27 @@ export function TeaserLock({ onUnlock }: TeaserLockProps) {
           seconds: Math.floor((difference % (1000 * 60)) / 1000),
         })
       } else {
+        // Countdown finished - unlock the page
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+        if (interval) clearInterval(interval)
+        onUnlock()
       }
     }
 
-    updateCountdown()
-    const interval = setInterval(updateCountdown, 1000)
+    // Check immediately if countdown already passed
+    const now = new Date().getTime()
+    if (targetTime - now <= 0) {
+      onUnlock()
+      return
+    }
 
-    return () => clearInterval(interval)
-  }, [])
+    updateCountdown()
+    interval = setInterval(updateCountdown, 1000)
+
+    return () => {
+      if (interval) clearInterval(interval)
+    }
+  }, [onUnlock])
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

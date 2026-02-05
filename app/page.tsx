@@ -112,66 +112,117 @@ export default function Home() {
 
   return (
     <main className="h-screen overflow-hidden bg-black text-white flex flex-col">
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-transparent">
+      {/* Navbar with Canvas in center */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-transparent pt-4">
         <div className="w-full max-w-[95vw] mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-end h-14 gap-4">
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="flex-1 flex items-center justify-center bg-black relative overflow-hidden">
-        <MatrixBackground />
-        {/* Fixed Map Background - Above Matrix - Stays locked to viewport */}
-        <div 
-          className="absolute inset-0 z-[1]"
-          style={{
-            backgroundImage: "url('/Map 1.png')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            opacity: 0.17,
-            pointerEvents: 'none',
-          }}
-        />
-        <div className="w-full max-w-4xl mx-auto px-0 sm:px-6 relative z-10 flex items-center justify-center">
-          <div className="flex flex-col items-center justify-center w-full">
+          <div className="flex items-center justify-center">
             {imageError && (
               <div className="text-red-500 text-center text-sm px-4">{imageError}</div>
             )}
             {!uploadedImage && !imageError && (
               <div className="flex items-center justify-center">
-                <div className="w-12 h-12 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               </div>
             )}
             {uploadedImage && (
-              <div className="flex flex-col items-center justify-center w-full">
-                <div className="flex justify-center items-center w-full overflow-hidden">
-                  <div className={`flex justify-center items-center w-full ${showGlitch ? 'glitch-on-load' : ''}`} style={{ maxWidth: '100vw' }}>
-                    <Rotator3D>
-                <ImageCanvas
-                  image={uploadedImage}
-                  halftoneSize={halftoneSize}
-                  contrast={contrast}
-                  accentColor={accentColor}
-                  mouseRadius={mouseRadius}
-                  repulsionStrength={repulsionStrength}
-                  returnSpeed={returnSpeed}
-                  accentProbability={accentProbability}
-                  sizeVariation={sizeVariation}
-                />
-                    </Rotator3D>
-                  </div>
-                </div>
+              <div className={`${showGlitch ? 'glitch-on-load' : ''}`}>
+                <Rotator3D>
+                  <ImageCanvas
+                    image={uploadedImage}
+                    halftoneSize={halftoneSize}
+                    contrast={contrast}
+                    accentColor={accentColor}
+                    mouseRadius={mouseRadius}
+                    repulsionStrength={repulsionStrength}
+                    returnSpeed={returnSpeed}
+                    accentProbability={accentProbability}
+                    sizeVariation={sizeVariation}
+                  />
+                </Rotator3D>
               </div>
             )}
           </div>
         </div>
+      </nav>
+
+      {/* Video Background - Fixed to cover entire viewport */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="fixed inset-0 w-full h-full object-cover"
+        style={{
+          opacity: 0.45,
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      >
+        <source src="/bg-video.mov" type="video/mp4" />
+      </video>
+
+      {/* Fixed Map Background - Covers entire viewport */}
+      <div 
+        className="fixed inset-0"
+        style={{
+          backgroundImage: "url('/Map 1.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center 70%',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.17,
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}
+      />
+
+      {/* Hero Section */}
+      <section className="flex-1 flex flex-col bg-transparent relative overflow-hidden">
+        {/* Matrix rain - z-index 2 */}
+        <MatrixBackground />
+
+        {/* SHOP link in center */}
+        <div className="flex-1 flex items-center justify-center relative z-10">
+          <a 
+            href="https://www.kidzlori.com" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="glitch-hover text-white text-3xl sm:text-4xl md:text-5xl font-light tracking-widest"
+            style={{ fontFamily: 'var(--font-roboto), sans-serif' }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget
+              let isHovering = true
+              el.dataset.hovering = 'true'
+              
+              const triggerGlitch = () => {
+                if (el.dataset.hovering !== 'true') return
+                
+                el.classList.add('glitching')
+                // Random duration between 100-300ms
+                const duration = 100 + Math.random() * 200
+                setTimeout(() => {
+                  el.classList.remove('glitching')
+                  // Random delay between 1-4 seconds before next glitch
+                  const nextDelay = 1000 + Math.random() * 3000
+                  setTimeout(triggerGlitch, nextDelay)
+                }, duration)
+              }
+              
+              // Initial delay before first glitch (0.5-2 seconds)
+              const initialDelay = 500 + Math.random() * 1500
+              setTimeout(triggerGlitch, initialDelay)
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.dataset.hovering = 'false'
+              e.currentTarget.classList.remove('glitching')
+            }}
+          >
+            SHOP
+          </a>
+        </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-black py-4 md:py-6 relative z-10 flex-shrink-0">
+      <footer className="bg-transparent py-4 md:py-6 relative z-10 flex-shrink-0">
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row items-center justify-center md:justify-between gap-4">
             <div className="flex items-center gap-4">

@@ -72,9 +72,8 @@ export function MatrixBackground({ className = "" }: MatrixBackgroundProps) {
 
     // Animation function
     const draw = () => {
-      // Strong fade effect to completely clear trails
-      ctx.fillStyle = "rgba(0, 0, 0, 0.2)"
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      // Clear canvas with transparency to show video behind
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       // Dim white text
       ctx.font = `${fontSize}px monospace`
@@ -104,7 +103,7 @@ export function MatrixBackground({ className = "" }: MatrixBackgroundProps) {
         }
         
         // Draw current character
-        ctx.fillStyle = "rgba(255, 255, 255, 0.22)"
+        ctx.fillStyle = "rgba(255, 255, 255, 0.08)"
         ctx.fillText(text, xPosition, drops[i] * fontSize)
         
         // Draw a few characters above to create visible trail with proper spacing
@@ -117,7 +116,7 @@ export function MatrixBackground({ className = "" }: MatrixBackgroundProps) {
           const trailText = patternArray[trailPatternIndex < 0 ? patternArray.length + trailPatternIndex : trailPatternIndex]
           
           // Fade opacity as we go up the trail
-          const trailOpacity = 0.22 * (1 - j / (trailLength + 1)) * 0.8
+          const trailOpacity = 0.08 * (1 - j / (trailLength + 1)) * 0.8
           ctx.fillStyle = `rgba(255, 255, 255, ${trailOpacity})`
           ctx.fillText(trailText, xPosition, trailY)
         }
@@ -145,7 +144,7 @@ export function MatrixBackground({ className = "" }: MatrixBackgroundProps) {
     <canvas
       ref={canvasRef}
       className={`absolute inset-0 w-full h-full ${className}`}
-      style={{ mixBlendMode: "normal" }}
+      style={{ mixBlendMode: "normal", zIndex: 2 }}
     />
   )
 }
