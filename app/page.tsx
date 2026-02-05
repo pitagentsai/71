@@ -5,7 +5,6 @@ import { ImageCanvas } from "@/components/image-canvas"
 import { Instagram } from "lucide-react"
 import { MatrixBackground } from "@/components/matrix-background"
 import { Rotator3D } from "@/components/3d-rotator"
-import { TeaserLock } from "@/components/teaser-lock"
 import { EffectControls } from "@/components/effect-controls"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
@@ -23,7 +22,6 @@ export default function Home() {
   const [uploadedImage, setUploadedImage] = useState<HTMLImageElement | null>(null)
   const [imageError, setImageError] = useState<string | null>(null)
   const [fxControlsOpen, setFxControlsOpen] = useState(false)
-  const [isUnlocked, setIsUnlocked] = useState(false)
   const [showGlitch, setShowGlitch] = useState(false)
   const glitchTimeoutsRef = useRef<NodeJS.Timeout[]>([])
 
@@ -36,17 +34,6 @@ export default function Home() {
   const [returnSpeed, setReturnSpeed] = useState(PRESET_RETURN_SPEED)
   const [accentProbability, setAccentProbability] = useState(PRESET_ACCENT_PROBABILITY)
   const [sizeVariation, setSizeVariation] = useState(PRESET_SIZE_VARIATION)
-
-  // Check if site is already unlocked (from localStorage)
-  useEffect(() => {
-    const unlocked = localStorage.getItem('siteUnlocked') === 'true'
-    setIsUnlocked(unlocked)
-  }, [])
-
-  const handleUnlock = () => {
-    setIsUnlocked(true)
-    localStorage.setItem('siteUnlocked', 'true')
-  }
 
   useEffect(() => {
     const img = new Image()
@@ -104,11 +91,6 @@ export default function Home() {
       glitchTimeoutsRef.current = []
     }
   }, [uploadedImage])
-
-  // Show teaser lock if not unlocked
-  if (!isUnlocked) {
-    return <TeaserLock onUnlock={handleUnlock} />
-  }
 
   return (
     <main className="h-screen overflow-hidden bg-black text-white flex flex-col">
@@ -181,12 +163,12 @@ export default function Home() {
         <MatrixBackground />
 
         {/* SHOP link in center */}
-        <div className="flex-1 flex items-center justify-center relative z-10">
+        <div className="flex-1 flex items-center justify-center relative z-10 w-full">
           <a 
             href="https://www.kidzlori.com" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="glitch-hover text-white text-3xl sm:text-4xl md:text-5xl font-light tracking-widest"
+            className="glitch-hover text-white text-3xl sm:text-4xl md:text-5xl font-light tracking-widest text-center"
             style={{ fontFamily: 'var(--font-roboto), sans-serif' }}
             onMouseEnter={(e) => {
               const el = e.currentTarget
