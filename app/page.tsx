@@ -107,7 +107,7 @@ export default function Home() {
               </div>
             )}
             {uploadedImage && (
-              <div className={`${showGlitch ? 'glitch-on-load' : ''}`}>
+              <div className={`fade-in-logo ${showGlitch ? 'glitch-on-load' : ''}`}>
                 <Rotator3D>
                   <ImageCanvas
                     image={uploadedImage}
@@ -133,9 +133,8 @@ export default function Home() {
         loop
         muted
         playsInline
-        className="fixed inset-0 w-full h-full object-cover"
+        className="fixed inset-0 w-full h-full object-cover fade-in-video"
         style={{
-          opacity: 0.45,
           pointerEvents: 'none',
           zIndex: 0,
         }}
@@ -145,13 +144,12 @@ export default function Home() {
 
       {/* Fixed Map Background - Covers entire viewport */}
       <div 
-        className="fixed inset-0"
+        className="fixed inset-0 fade-in-map"
         style={{
           backgroundImage: "url('/Map 1.png')",
           backgroundSize: 'cover',
           backgroundPosition: 'center 70%',
           backgroundRepeat: 'no-repeat',
-          opacity: 0.17,
           pointerEvents: 'none',
           zIndex: 1,
         }}
@@ -160,7 +158,9 @@ export default function Home() {
       {/* Hero Section */}
       <section className="flex-1 flex flex-col bg-transparent relative overflow-hidden">
         {/* Matrix rain - z-index 2 */}
-        <MatrixBackground />
+        <div className="fade-in-matrix absolute inset-0">
+          <MatrixBackground />
+        </div>
 
         {/* SHOP link in center */}
         <div className="flex-1 flex items-center justify-center relative z-10 w-full">
@@ -168,7 +168,7 @@ export default function Home() {
             href="https://www.kidzlori.com" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="glitch-hover text-white text-3xl sm:text-4xl md:text-5xl font-light tracking-widest text-center"
+            className="glitch-hover fade-in-shop text-white text-3xl sm:text-4xl md:text-5xl font-light tracking-widest text-center"
             style={{ fontFamily: 'var(--font-roboto), sans-serif' }}
             onMouseEnter={(e) => {
               const el = e.currentTarget
@@ -204,7 +204,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-transparent py-4 md:py-6 relative z-10 flex-shrink-0">
+      <footer className="bg-transparent py-4 md:py-6 relative z-10 flex-shrink-0 fade-in-footer">
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row items-center justify-center md:justify-between gap-4">
             <div className="flex items-center gap-4">
