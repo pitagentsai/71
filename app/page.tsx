@@ -168,35 +168,8 @@ export default function Home() {
             href="https://www.kidzlori.com" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="glitch-hover fade-in-shop text-white text-3xl sm:text-4xl md:text-5xl font-light tracking-widest text-center"
+            className="fade-in-shop text-white text-3xl sm:text-4xl md:text-5xl font-light tracking-widest text-center hover:scale-[1.15]"
             style={{ fontFamily: 'var(--font-roboto), sans-serif' }}
-            onMouseEnter={(e) => {
-              const el = e.currentTarget
-              let isHovering = true
-              el.dataset.hovering = 'true'
-              
-              const triggerGlitch = () => {
-                if (el.dataset.hovering !== 'true') return
-                
-                el.classList.add('glitching')
-                // Random duration between 100-300ms
-                const duration = 100 + Math.random() * 200
-                setTimeout(() => {
-                  el.classList.remove('glitching')
-                  // Random delay between 1-4 seconds before next glitch
-                  const nextDelay = 1000 + Math.random() * 3000
-                  setTimeout(triggerGlitch, nextDelay)
-                }, duration)
-              }
-              
-              // Initial delay before first glitch (0.5-2 seconds)
-              const initialDelay = 500 + Math.random() * 1500
-              setTimeout(triggerGlitch, initialDelay)
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.dataset.hovering = 'false'
-              e.currentTarget.classList.remove('glitching')
-            }}
           >
             SHOP
           </a>
