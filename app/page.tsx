@@ -156,14 +156,14 @@ export default function Home() {
       />
 
       {/* Hero Section */}
-      <section className="flex-1 flex flex-col bg-transparent relative overflow-hidden">
+      <section className="flex-1 flex flex-col bg-transparent relative overflow-hidden pt-20 pb-16">
         {/* Matrix rain - z-index 2 */}
         <div className="fade-in-matrix absolute inset-0">
           <MatrixBackground />
         </div>
 
         {/* SHOP link in center */}
-        <div className="flex-1 flex items-center justify-center relative z-10 w-full">
+        <div className="flex-1 flex items-center justify-center relative z-10 w-full min-h-0">
           <a 
             href="https://www.kidzlori.com" 
             target="_blank" 
