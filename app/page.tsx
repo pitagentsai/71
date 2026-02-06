@@ -156,25 +156,23 @@ export default function Home() {
       />
 
       {/* Hero Section */}
-      <section className="flex-1 flex flex-col bg-transparent relative overflow-hidden pt-20 pb-16">
+      <section className="flex-1 flex flex-col bg-transparent relative overflow-hidden">
         {/* Matrix rain - z-index 2 */}
         <div className="fade-in-matrix absolute inset-0">
           <MatrixBackground />
         </div>
-
-        {/* SHOP link in center */}
-        <div className="flex-1 flex items-center justify-center relative z-10 w-full min-h-0">
-          <a 
-            href="https://www.kidzlori.com" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="fade-in-shop text-white text-3xl sm:text-4xl md:text-5xl font-light tracking-widest text-center hover:scale-[1.15]"
-            style={{ fontFamily: 'var(--font-roboto), sans-serif' }}
-          >
-            SHOP
-          </a>
-        </div>
       </section>
+
+      {/* SHOP link - fixed center of viewport */}
+      <a 
+        href="https://www.kidzlori.com" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="fade-in-shop fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 text-white text-3xl sm:text-4xl md:text-5xl font-light tracking-widest text-center hover:scale-[1.15]"
+        style={{ fontFamily: 'var(--font-roboto), sans-serif' }}
+      >
+        SHOP
+      </a>
 
       {/* Footer */}
       <footer className="bg-transparent py-4 md:py-6 relative z-10 flex-shrink-0 fade-in-footer">
