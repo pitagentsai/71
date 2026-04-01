@@ -118,44 +118,44 @@ export default function Home() {
         />
 
         {/* Frame viewfinder guides */}
-        <div className="absolute inset-[7%] z-[3] border border-white/5 pointer-events-none" />
-        <div className="absolute inset-[7%] z-[3] pointer-events-none">
-          <div className="absolute left-0 top-0 h-7 w-7 border-l border-t border-white/20" />
-          <div className="absolute right-0 top-0 h-7 w-7 border-r border-t border-white/20" />
-          <div className="absolute left-0 bottom-0 h-7 w-7 border-l border-b border-white/20" />
-          <div className="absolute right-0 bottom-0 h-7 w-7 border-r border-b border-white/20" />
+        <div className="absolute inset-[4%] sm:inset-[7%] z-[3] border border-white/5 pointer-events-none" />
+        <div className="absolute inset-[4%] sm:inset-[7%] z-[3] pointer-events-none">
+          <div className="absolute left-0 top-0 h-5 w-5 sm:h-7 sm:w-7 border-l border-t border-white/20" />
+          <div className="absolute right-0 top-0 h-5 w-5 sm:h-7 sm:w-7 border-r border-t border-white/20" />
+          <div className="absolute left-0 bottom-0 h-5 w-5 sm:h-7 sm:w-7 border-l border-b border-white/20" />
+          <div className="absolute right-0 bottom-0 h-5 w-5 sm:h-7 sm:w-7 border-r border-b border-white/20" />
         </div>
 
-        {/* Viewfinder HUD */}
-        <div className="absolute inset-[7%] z-[4] pointer-events-none text-white/50 opacity-40 font-mono">
-          <div className="viewfinder-topbar absolute left-0 top-0 right-0 flex items-center justify-between text-[10px] tracking-[0.2em]">
-            <span>LIVE FEED</span>
-            <span>4K 24FPS</span>
-            <span>BAT 92%</span>
+        {/* Viewfinder HUD — mobile: tighter inset, wrap telemetry, smaller crosshair, hide side clutter */}
+        <div className="absolute inset-[4%] sm:inset-[7%] z-[4] pointer-events-none text-white/55 sm:text-white/50 opacity-45 sm:opacity-40 font-mono">
+          <div className="viewfinder-topbar absolute left-0 top-0 right-0 flex items-center justify-between gap-2 px-1 sm:px-0 text-[8px] sm:text-[10px] tracking-[0.12em] sm:tracking-[0.2em]">
+            <span className="shrink-0">LIVE</span>
+            <span className="shrink-0 text-center">4K 24</span>
+            <span className="shrink-0">92%</span>
           </div>
 
-          <div className="absolute inset-0">
+          <div className="absolute inset-0 hidden sm:block">
             <div className="viewfinder-third-v absolute left-1/3 top-0 h-full w-px -translate-x-1/2" />
             <div className="viewfinder-third-v absolute left-2/3 top-0 h-full w-px -translate-x-1/2" />
             <div className="viewfinder-third-h absolute left-0 top-1/3 h-px w-full -translate-y-1/2" />
             <div className="viewfinder-third-h absolute left-0 top-2/3 h-px w-full -translate-y-1/2" />
           </div>
 
-          <div className="absolute left-1/2 top-1/2 h-[26rem] w-[26rem] -translate-x-1/2 -translate-y-1/2">
-            <div className="absolute left-1/2 top-0 h-10 w-px -translate-x-1/2 bg-white/50" />
-            <div className="absolute left-1/2 bottom-0 h-10 w-px -translate-x-1/2 bg-white/50" />
-            <div className="absolute left-0 top-1/2 h-px w-10 -translate-y-1/2 bg-white/50" />
-            <div className="absolute right-0 top-1/2 h-px w-10 -translate-y-1/2 bg-white/50" />
+          <div className="absolute left-1/2 top-1/2 h-[min(68vw,17.5rem)] w-[min(68vw,17.5rem)] sm:h-[26rem] sm:w-[26rem] -translate-x-1/2 -translate-y-1/2">
+            <div className="absolute left-1/2 top-0 h-6 w-px sm:h-10 -translate-x-1/2 bg-white/45 sm:bg-white/50" />
+            <div className="absolute left-1/2 bottom-0 h-6 w-px sm:h-10 -translate-x-1/2 bg-white/45 sm:bg-white/50" />
+            <div className="absolute left-0 top-1/2 h-px w-6 sm:w-10 -translate-y-1/2 bg-white/45 sm:bg-white/50" />
+            <div className="absolute right-0 top-1/2 h-px w-6 sm:w-10 -translate-y-1/2 bg-white/45 sm:bg-white/50" />
           </div>
 
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 viewfinder-scale">
+          <div className="absolute left-0 top-1/2 hidden -translate-y-1/2 viewfinder-scale sm:flex">
             <span />
             <span />
             <span />
             <span />
             <span />
           </div>
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 viewfinder-scale">
+          <div className="absolute right-0 top-1/2 hidden -translate-y-1/2 viewfinder-scale sm:flex">
             <span />
             <span />
             <span />
@@ -163,17 +163,17 @@ export default function Home() {
             <span />
           </div>
 
-          <div className="viewfinder-bottombar absolute bottom-0 left-0 right-0 flex items-center justify-between text-[10px] tracking-[0.2em]">
+          <div className="viewfinder-bottombar absolute bottom-0 left-0 right-0 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[8px] tracking-[0.1em] sm:flex-nowrap sm:justify-between sm:gap-0 sm:text-[10px] sm:tracking-[0.2em]">
             <span>ISO 800</span>
             <span>1/125</span>
             <span>F2.8</span>
             <span>+0.3EV</span>
-            <span>00:03:12</span>
+            <span className="basis-full text-center sm:basis-auto sm:text-left">00:03:12</span>
           </div>
         </div>
 
         {/* Bottom edge status ticker */}
-        <div className="viewfinder-ticker absolute bottom-0 left-0 right-0 z-[5] pointer-events-none">
+        <div className="viewfinder-ticker absolute bottom-0 left-0 right-0 z-[5] pointer-events-none pb-[env(safe-area-inset-bottom,0px)]">
           <div className="viewfinder-ticker-track">
             <span>ENEMY CORP SALES ARE CLOSED</span>
             <span>SEE YOU SOON ENEMY</span>

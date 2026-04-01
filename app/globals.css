@@ -440,6 +440,13 @@
   color: rgba(255, 255, 255, 0.72);
 }
 
+@media (max-width: 639px) {
+  .viewfinder-topbar,
+  .viewfinder-bottombar {
+    padding: 0.2rem 0.28rem;
+  }
+}
+
 .viewfinder-third-v {
   background: linear-gradient(
     to bottom,
@@ -480,6 +487,15 @@
   color: rgba(255, 255, 255, 0.45);
   white-space: nowrap;
   animation: tickerScroll 24s linear infinite;
+}
+
+@media (max-width: 639px) {
+  .viewfinder-ticker-track {
+    gap: 1.35rem;
+    padding: 0.32rem 0;
+    font-size: 0.52rem;
+    letter-spacing: 0.12em;
+  }
 }
 
 .viewfinder-ticker-track span::after {
