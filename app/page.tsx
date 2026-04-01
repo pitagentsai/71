@@ -105,7 +105,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
       {/* Hero Section - Full viewport height */}
-      <section className="relative flex h-screen min-h-0 flex-col overflow-hidden">
+      <section className="relative h-[100svh] min-h-[100svh] overflow-hidden md:h-screen md:min-h-screen">
         {/* Background Image */}
         <img
           src="/dziewczyny.jpg"
@@ -113,7 +113,7 @@ export default function Home() {
           className="absolute inset-0 w-full h-full object-cover fade-in-video"
           style={{
             pointerEvents: 'none',
-            filter: "brightness(0.88) blur(2.5px)",
+            filter: "brightness(0.88) blur(1px)",
           }}
         />
 
@@ -172,8 +172,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Centered Logo */}
-        <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center">
+        {/* Centered Logo — absolute fill so ticker reflow / mobile vh changes do not move it */}
+        <div className="absolute inset-0 z-10 flex items-center justify-center">
           {imageError && (
             <div className="text-red-500 text-center text-sm px-4">{imageError}</div>
           )}
@@ -201,8 +201,8 @@ export default function Home() {
           )}
         </div>
 
-        {/* Bottom edge status ticker — last flex child: pinned to hero bottom edge */}
-        <div className="viewfinder-ticker relative z-[5] w-full shrink-0 pointer-events-none pb-[env(safe-area-inset-bottom,0px)]">
+        {/* Bottom edge ticker — absolute to hero; avoids flex + vh resize jump on mobile */}
+        <div className="viewfinder-ticker absolute bottom-0 left-0 right-0 z-[5] pointer-events-none pb-[env(safe-area-inset-bottom,0px)]">
           <div className="viewfinder-ticker-track">
             <span>ENEMY CORP SALES ARE CLOSED</span>
             <span>SEE YOU SOON ENEMY</span>
