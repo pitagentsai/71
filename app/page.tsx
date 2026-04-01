@@ -110,10 +110,10 @@ export default function Home() {
         <img
           src="/dziewczyny.jpg"
           alt=""
-          className="absolute inset-0 w-full h-full object-cover fade-in-video"
+          className="absolute inset-0 h-full w-full object-cover object-[68%_center] md:object-center fade-in-video"
           style={{
             pointerEvents: 'none',
-            filter: "brightness(0.88) blur(1px)",
+            filter: "brightness(0.88) blur(0.5px)",
           }}
         />
 
