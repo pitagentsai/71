@@ -541,7 +541,7 @@
   position: absolute;
   inset: -10%;
   z-index: 0;
-  opacity: 0.82;
+  opacity: 0.45;
   filter: blur(36px);
   background:
     radial-gradient(ellipse 95% 55% at 50% 108%, rgba(220, 140, 90, 0.55), transparent 58%),
@@ -556,11 +556,29 @@
   .video-ambilight-glow {
     inset: -8%;
     filter: blur(28px);
-    opacity: 0.72;
+    opacity: 0.38;
   }
 }
 
 .video-ambilight-bleed {
   filter: blur(40px) saturate(1.12);
   transform: scale(1.12) translateZ(0);
+}
+
+/* Hero photo continuity glow at top of second section */
+.hero-photo-bleed {
+  height: 22rem;
+  filter: blur(42px) brightness(0.7) saturate(1.2);
+  opacity: 0.38;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent);
+  transform: scaleX(1.08) translateZ(0);
+}
+
+@media (max-width: 639px) {
+  .hero-photo-bleed {
+    height: 14rem;
+    filter: blur(32px) brightness(0.65) saturate(1.15);
+    opacity: 0.32;
+  }
 }

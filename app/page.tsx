@@ -217,8 +217,19 @@ export default function Home() {
       </section>
 
       {/* YouTube Section — ambilight-style glow behind player */}
-      <section className="relative isolate bg-black min-h-screen flex items-center justify-center overflow-x-hidden py-16 md:py-24">
-        <div className="w-full max-w-4xl mx-auto px-4 sm:px-6">
+      <section className="relative isolate bg-black min-h-screen flex items-center justify-center overflow-hidden py-14 md:py-24">
+
+        <div className="relative z-[1] w-full max-w-4xl mx-auto px-4 sm:px-6">
+          {/* Logo above player */}
+          <div className="flex justify-center mb-14 md:mb-20">
+            <img
+              src="/lorienemylogo.png"
+              alt="LORI ENEMY"
+              className="h-8 sm:h-10 md:h-12 w-auto"
+              style={{ filter: "brightness(0) invert(1)" }}
+            />
+          </div>
+
           <div
             className="video-ambilight-frame relative mx-auto w-full overflow-visible"
             style={{ paddingBottom: "56.25%" }}
@@ -251,9 +262,9 @@ export default function Home() {
                   href="https://www.youtube.com/@setteunocom"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="absolute left-1/2 top-1/2 z-[2] -translate-x-1/2 -translate-y-1/2 bg-black/55 border border-white/20 px-4 py-2 text-[11px] tracking-[0.16em] text-white/85 hover:text-white transition-colors"
+                  className="absolute left-1/2 top-1/2 z-[2] -translate-x-1/2 -translate-y-1/2 text-[11px] tracking-[0.2em] text-white/70 hover:text-white transition-colors underline underline-offset-4 decoration-white/30 hover:decoration-white/60"
                 >
-                  OPEN YOUTUBE
+                  YOUTUBE
                 </a>
               </>
             ) : (
