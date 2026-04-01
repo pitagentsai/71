@@ -105,7 +105,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
       {/* Hero Section - Full viewport height */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative flex h-screen min-h-0 flex-col overflow-hidden">
         {/* Background Image */}
         <img
           src="/dziewczyny.jpg"
@@ -113,7 +113,7 @@ export default function Home() {
           className="absolute inset-0 w-full h-full object-cover fade-in-video"
           style={{
             pointerEvents: 'none',
-            filter: "brightness(0.88)",
+            filter: "brightness(0.88) blur(2.5px)",
           }}
         />
 
@@ -172,22 +172,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Bottom edge status ticker */}
-        <div className="viewfinder-ticker absolute bottom-0 left-0 right-0 z-[5] pointer-events-none pb-[env(safe-area-inset-bottom,0px)]">
-          <div className="viewfinder-ticker-track">
-            <span>ENEMY CORP SALES ARE CLOSED</span>
-            <span>SEE YOU SOON ENEMY</span>
-            <span>NEXT DROP: TBA</span>
-            <span>FOLLOW @KIDZLORI FOR UPDATES</span>
-            <span>ENEMY CORP SALES ARE CLOSED</span>
-            <span>SEE YOU SOON ENEMY</span>
-            <span>NEXT DROP: TBA</span>
-            <span>FOLLOW @KIDZLORI FOR UPDATES</span>
-          </div>
-        </div>
-
         {/* Centered Logo */}
-        <div className="relative z-10">
+        <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center">
           {imageError && (
             <div className="text-red-500 text-center text-sm px-4">{imageError}</div>
           )}
@@ -214,16 +200,45 @@ export default function Home() {
             </div>
           )}
         </div>
+
+        {/* Bottom edge status ticker — last flex child: pinned to hero bottom edge */}
+        <div className="viewfinder-ticker relative z-[5] w-full shrink-0 pointer-events-none pb-[env(safe-area-inset-bottom,0px)]">
+          <div className="viewfinder-ticker-track">
+            <span>ENEMY CORP SALES ARE CLOSED</span>
+            <span>SEE YOU SOON ENEMY</span>
+            <span>NEXT DROP: TBA</span>
+            <span>FOLLOW @KIDZLORI FOR UPDATES</span>
+            <span>ENEMY CORP SALES ARE CLOSED</span>
+            <span>SEE YOU SOON ENEMY</span>
+            <span>NEXT DROP: TBA</span>
+            <span>FOLLOW @KIDZLORI FOR UPDATES</span>
+          </div>
+        </div>
       </section>
 
-      {/* YouTube Section */}
-      <section className="bg-black min-h-screen flex items-center justify-center">
+      {/* YouTube Section — ambilight-style glow behind player */}
+      <section className="relative isolate bg-black min-h-screen flex items-center justify-center overflow-x-hidden py-16 md:py-24">
         <div className="w-full max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+          <div
+            className="video-ambilight-frame relative mx-auto w-full overflow-visible"
+            style={{ paddingBottom: "56.25%" }}
+          >
+            <div className="video-ambilight-glow pointer-events-none" aria-hidden />
+
             {showVideoFallback ? (
               <>
                 <video
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="video-ambilight-bleed pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-[0.42]"
+                  src="/bg-video.mov"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  tabIndex={-1}
+                  aria-hidden
+                />
+                <video
+                  className="absolute inset-0 z-[1] h-full w-full object-cover"
                   src="/bg-video.mov"
                   autoPlay
                   loop
@@ -236,14 +251,14 @@ export default function Home() {
                   href="https://www.youtube.com/@setteunocom"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-black/55 border border-white/20 px-4 py-2 text-[11px] tracking-[0.16em] text-white/85 hover:text-white transition-colors"
+                  className="absolute left-1/2 top-1/2 z-[2] -translate-x-1/2 -translate-y-1/2 bg-black/55 border border-white/20 px-4 py-2 text-[11px] tracking-[0.16em] text-white/85 hover:text-white transition-colors"
                 >
                   OPEN YOUTUBE
                 </a>
               </>
             ) : (
               <iframe
-                className="absolute inset-0 w-full h-full"
+                className="absolute inset-0 z-[1] h-full w-full"
                 src="https://www.youtube.com/embed?listType=user_uploads&list=setteunocom"
                 title="setteunocom channel uploads"
                 frameBorder="0"
