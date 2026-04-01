@@ -47,8 +47,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`overflow-hidden ${roboto.variable}`}>
-      <body className={`font-sans antialiased overflow-hidden`}>
+    <html lang="en" className={roboto.variable}>
+      <body className="font-sans antialiased">
         <Favicon />
         {children}
         <Analytics />

@@ -7,7 +7,6 @@ interface Rotator3DProps {
 }
 
 export function Rotator3D({ children }: Rotator3DProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
   const [rotation, setRotation] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const lastPositionRef = useRef({ x: 0, y: 0 })
@@ -45,6 +44,7 @@ export function Rotator3D({ children }: Rotator3DProps) {
 
     const handleGlobalMouseUp = () => {
       setIsDragging(false)
+      setRotation({ x: 0, y: 0 })
     }
 
     const handleGlobalTouchMove = (e: TouchEvent) => {
@@ -65,6 +65,7 @@ export function Rotator3D({ children }: Rotator3DProps) {
 
     const handleGlobalTouchEnd = () => {
       setIsDragging(false)
+      setRotation({ x: 0, y: 0 })
     }
 
     window.addEventListener('mousemove', handleGlobalMouseMove)
@@ -80,28 +81,8 @@ export function Rotator3D({ children }: Rotator3DProps) {
     }
   }, [isDragging])
 
-  // Smooth return to center when not dragging
-  useEffect(() => {
-    if (!isDragging) {
-      const interval = setInterval(() => {
-        setRotation((prev) => {
-          const newX = prev.x * 0.95
-          const newY = prev.y * 0.95
-          // Stop animation when values are very small
-          if (Math.abs(newX) < 0.1 && Math.abs(newY) < 0.1) {
-            return { x: 0, y: 0 }
-          }
-          return { x: newX, y: newY }
-        })
-      }, 16)
-
-      return () => clearInterval(interval)
-    }
-  }, [isDragging])
-
   return (
     <div
-      ref={containerRef}
       className="cursor-grab active:cursor-grabbing"
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
@@ -114,7 +95,7 @@ export function Rotator3D({ children }: Rotator3DProps) {
         style={{
           transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) translateZ(0)`,
           transformStyle: 'preserve-3d',
-          transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+          transition: isDragging ? 'none' : 'transform 0.2s ease-out',
           willChange: 'transform',
         }}
       >

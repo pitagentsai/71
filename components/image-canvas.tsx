@@ -128,10 +128,10 @@ export const ImageCanvas = forwardRef<HTMLCanvasElement, ImageCanvasProps>(
       const ctx = canvas.getContext("2d", { willReadFrequently: true })
       if (!ctx) return
 
-      // Responsive sizing - small canvas for navbar
+      // Responsive sizing - larger for center placement
       const isMobile = window.innerWidth < 768
-      const MAX_WIDTH = isMobile ? 50 : 60
-      const MAX_HEIGHT = isMobile ? 50 : 60
+      const MAX_WIDTH = isMobile ? 140 : 220
+      const MAX_HEIGHT = isMobile ? 140 : 220
 
       // Calculate scale to fit within both width and height constraints
       const scaleX = MAX_WIDTH / image.width
@@ -178,9 +178,9 @@ export const ImageCanvas = forwardRef<HTMLCanvasElement, ImageCanvasProps>(
           const i = (sampleY * canvas.width + sampleX) * 4
           const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3
 
-          const dotSize = (brightness / 255) * adjustedHalftoneSize * 0.6
+          const dotSize = (brightness / 255) * adjustedHalftoneSize * 0.85
 
-          if (dotSize > 0.5) {
+          if (dotSize > 0.35) {
             const centerX = x + adjustedHalftoneSize / 2
             const centerY = y + adjustedHalftoneSize / 2
 
@@ -206,48 +206,18 @@ export const ImageCanvas = forwardRef<HTMLCanvasElement, ImageCanvasProps>(
       }
 
       dotsRef.current = dots
+      ctx.clearRect(0, 0, displayWidth, displayHeight)
 
-      const animate = () => {
-        ctx.clearRect(0, 0, displayWidth, displayHeight)
-
-        const timeSinceLastMove = Date.now() - lastMoveTimeRef.current
-        const isMouseMoving = timeSinceLastMove < 100
-
-        // fadeFactorRef.current is always 1 now, no fading
-        fadeFactorRef.current = 1
-
-        if (!isMouseMoving) {
-          mouseTrailRef.current = []
-        }
-
-        const time = Date.now() * 0.001
-
-        const fadeOutFactor = 1
-
-        dots.forEach((dot) => {
-          // Keep particles at their base positions - no mouse interaction
-          dot.x = dot.baseX
-          dot.y = dot.baseY
-          dot.vx = 0
-          dot.vy = 0
-
-          const currentSize = dot.baseSize * dot.sizeMultiplier
-
-          ctx.globalAlpha = 1
-          ctx.fillStyle = dot.isAccent ? accentColor : "#ffffff"
-
-          ctx.beginPath()
-          ctx.arc(dot.x, dot.y, currentSize / 2, 0, Math.PI * 2)
-          ctx.fill()
-          ctx.globalAlpha = 1
-        })
-
-        animationFrameRef.current = requestAnimationFrame(animate)
-      }
-
-      animate()
-
-      // Mouse event listeners removed - no interaction
+      // Render once instead of animating every frame for smoother page scrolling.
+      dots.forEach((dot) => {
+        const currentSize = dot.baseSize * dot.sizeMultiplier
+        ctx.globalAlpha = 1
+        ctx.fillStyle = dot.isAccent ? accentColor : "#ffffff"
+        ctx.beginPath()
+        ctx.arc(dot.baseX, dot.baseY, currentSize / 2, 0, Math.PI * 2)
+        ctx.fill()
+      })
+      ctx.globalAlpha = 1
 
       return () => {
         if (animationFrameRef.current) {

@@ -116,11 +116,15 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -306,7 +310,7 @@
     opacity: 0;
   }
   to {
-    opacity: 0.45;
+    opacity: 1;
   }
 }
 
@@ -354,4 +358,141 @@
   opacity: 0;
   animation: fadeIn 1.2s ease-out forwards;
   animation-delay: 1.5s;
+}
+
+/* CRT + viewfinder overlay effects */
+.crt-scanlines {
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.045) 0px,
+      rgba(255, 255, 255, 0.045) 1px,
+      rgba(0, 0, 0, 0.08) 2px,
+      rgba(0, 0, 0, 0.08) 3px
+    ),
+    repeating-linear-gradient(
+      to right,
+      rgba(255, 0, 0, 0.02) 0px,
+      rgba(255, 0, 0, 0.02) 1px,
+      rgba(0, 255, 255, 0.02) 2px,
+      rgba(0, 255, 255, 0.02) 3px
+    );
+  background-size: 100% 4px, 6px 100%;
+  mix-blend-mode: soft-light;
+  opacity: 0.42;
+}
+
+.crt-flicker {
+  background: rgba(255, 255, 255, 0.025);
+  animation: crtFlicker 3.4s steps(1, end) infinite;
+}
+
+.crt-vignette {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.02) 0%,
+    rgba(0, 0, 0, 0.14) 58%,
+    rgba(0, 0, 0, 0.32) 100%
+  );
+}
+
+@keyframes crtFlicker {
+  0%, 100% { opacity: 0.12; }
+  10% { opacity: 0.2; }
+  12% { opacity: 0.09; }
+  27% { opacity: 0.16; }
+  42% { opacity: 0.1; }
+  53% { opacity: 0.19; }
+  76% { opacity: 0.11; }
+  89% { opacity: 0.17; }
+}
+
+.viewfinder-scale {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  opacity: 0.7;
+}
+
+.viewfinder-scale span {
+  display: block;
+  width: 0.7rem;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.viewfinder-scale span:nth-child(3) {
+  width: 1.2rem;
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.viewfinder-topbar,
+.viewfinder-bottombar {
+  padding: 0.35rem 0.5rem;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.12),
+    rgba(0, 0, 0, 0.06),
+    rgba(0, 0, 0, 0.12)
+  );
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.viewfinder-third-v {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0)
+  );
+}
+
+.viewfinder-third-h {
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0)
+  );
+}
+
+.viewfinder-ticker {
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.035);
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.2),
+    rgba(10, 10, 10, 0.3),
+    rgba(0, 0, 0, 0.2)
+  );
+}
+
+.viewfinder-ticker-track {
+  display: flex;
+  width: max-content;
+  gap: 2.5rem;
+  padding: 0.45rem 0;
+  font-size: 0.63rem;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+  animation: tickerScroll 24s linear infinite;
+}
+
+.viewfinder-ticker-track span::after {
+  content: " //";
+  margin-left: 0.25rem;
+  color: rgba(255, 255, 255, 0.22);
+}
+
+@keyframes tickerScroll {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
 }
