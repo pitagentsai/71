@@ -14,30 +14,21 @@ const roboto = Roboto({
 })
 
 export const metadata: Metadata = {
-  title: "setteuno.com",
-  description: "setteuno.com",
+  title: "STRADA",
+  description: "STRADA",
   generator: "v0.app",
   icons: {
-    icon: "/favicon_2.png",
+    icon: "/strada-logo.png",
   },
   openGraph: {
-    title: "setteuno.com",
-    description: "setteuno.com",
+    title: "STRADA",
+    description: "STRADA",
     type: "website",
-    images: [
-      {
-        url: "/api/og-image",
-        width: 1200,
-        height: 630,
-        alt: "setteuno.com",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "setteuno.com",
-    description: "setteuno.com",
-    images: ["/api/og-image"],
+    title: "STRADA",
+    description: "STRADA",
   },
 }
 

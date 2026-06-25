@@ -34,10 +34,10 @@ export function Favicon() {
     }
     img.onerror = () => {
       // Fallback to original
-      link.href = '/favicon_2.png'
+      link.href = '/strada-logo.png'
       document.head.appendChild(link)
     }
-    img.src = '/favicon_2.png'
+    img.src = '/strada-logo.png'
   }, [])
 
   return null
