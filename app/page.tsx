@@ -17,7 +17,6 @@ const LIFESTYLE_PHOTOS = [
   "/lifestyle/05.jpeg",
   "/lifestyle/06.jpeg",
   "/lifestyle/07.jpeg",
-  "/lifestyle/08.jpeg",
 ]
 
 const STRADA_LOGO_STYLE = {
