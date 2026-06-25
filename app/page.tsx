@@ -10,13 +10,9 @@ const INSTAGRAM_URL = "https://www.instagram.com/kidzlori/"
 
 // Lifestyle carousel photos (our models)
 const LIFESTYLE_PHOTOS = [
-  "/lifestyle/01.jpeg",
-  "/lifestyle/02.jpeg",
-  "/lifestyle/03.jpeg",
-  "/lifestyle/04.jpeg",
   "/lifestyle/05.jpeg",
-  "/lifestyle/06.jpeg",
   "/lifestyle/07.jpeg",
+  "/lifestyle/08.jpeg",
 ]
 
 const STRADA_LOGO_STYLE = {
