@@ -1,10 +1,10 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import Link from "next/link"
 import { Instagram, Youtube } from "lucide-react"
 
 // External destinations
-const SHOP_URL = "https://www.kidzlori.com"
 const YOUTUBE_URL = "https://www.youtube.com/@kidzlori"
 const INSTAGRAM_URL = "https://www.instagram.com/kidzlori/"
 
@@ -73,12 +73,12 @@ export default function Home() {
 
       {/* Center nav — SHOP / LIFESTYLE, centered in the full viewport */}
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-7">
-        <a
-          href={SHOP_URL}
+        <Link
+          href="/shop"
           className="pointer-events-auto -mr-[0.35em] text-[13px] font-medium tracking-[0.35em] text-neutral-900 transition-opacity duration-200 hover:opacity-40"
         >
           SHOP
-        </a>
+        </Link>
         <button
           type="button"
           onClick={openLifestyle}
