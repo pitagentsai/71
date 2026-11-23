@@ -119,8 +119,30 @@ export async function getProducts(first = 50): Promise<Product[]> {
     `query Products($first: Int!) { products(first: $first, sortKey: CREATED_AT, reverse: true) { edges { node { ${PRODUCT_FIELDS} } } } }`,
     { first },
   )
-  return nodes(data.products).map(normalizeProduct)
+  return sortByCategory(nodes(data.products).map(normalizeProduct))
 }
+
+// Shop display order. Shopify has no reliable type/tags on these products, so the
+// category is read from the title. Checked in this sequence (e.g. "LONGSLEEVE TEE"
+// must hit longsleeve before tee); anything unmatched counts as an accessory.
+const CATEGORY_ORDER: RegExp[] = [
+  /\bHOOD(IE|Y|ED)S?\b/i, // hoodies
+  /\bLONG[\s-]?SLEEVES?\b|\bL\/S\b/i, // longsleeves
+  /\bSHORTS\b/i, // shorts (checked early so it never falls through), ranked below
+  /\b(PANTS|TROUSERS|JOGGERS?|SWEATPANTS|JEANS)\b/i, // pants
+  /\bT[\s-]?SHIRTS?\b|\bTEES?\b/i, // t-shirts
+]
+// Rank per matcher above: hoodies 0, longsleeves 1, shorts 4, pants 3, t-shirts 2; accessories 5
+const CATEGORY_RANK = [0, 1, 4, 3, 2]
+
+function categoryRank(title: string) {
+  const i = CATEGORY_ORDER.findIndex((re) => re.test(title))
+  return i === -1 ? 5 : CATEGORY_RANK[i]
+}
+
+// Stable: products in the same category keep Shopify's order (newest first)
+const sortByCategory = (products: Product[]) =>
+  [...products].sort((a, b) => categoryRank(a.title) - categoryRank(b.title))
 
 export async function getProduct(handle: string): Promise<Product | null> {
   const data = await shopifyFetch<{ product: RawProduct | null }>(

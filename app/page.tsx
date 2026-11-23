@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { Instagram, Youtube } from "lucide-react"
+import { LOGO_HEADER_CLASS, SiteLogo } from "@/components/site-logo"
 
 // External destinations
 const YOUTUBE_URL = "https://www.youtube.com/@kidzlori"
@@ -15,13 +16,6 @@ const LIFESTYLE_PHOTOS = [
   "/lifestyle/08.jpeg",
 ]
 
-const STRADA_LOGO_STYLE = {
-  filter: "invert(1)",
-  mixBlendMode: "multiply" as const,
-  // The snake artwork is offset left inside its source PNG; nudge right so its
-  // visual center lands on the exact page center (scales with the logo size).
-  transform: "translateX(1.56%)",
-}
 
 export default function Home() {
   const [lifestyleOpen, setLifestyleOpen] = useState(false)
@@ -62,19 +56,16 @@ export default function Home() {
   return (
     <main className="relative flex min-h-[100svh] flex-col bg-white text-neutral-900">
       {/* STRADA logo — top center */}
-      <header className="flex justify-center pt-10 md:pt-12">
-        <img
-          src="/strada-logo.png"
-          alt="STRADA"
-          className="h-28 w-28 select-none object-contain md:h-40 md:w-40"
-          style={STRADA_LOGO_STYLE}
-        />
+      {/* Logo — same component and header spacing as the shop, so it never moves between pages */}
+      <header className={LOGO_HEADER_CLASS}>
+        <SiteLogo />
       </header>
 
       {/* Center nav — SHOP / LIFESTYLE, centered in the full viewport */}
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-7">
         <Link
           href="/shop"
+          transitionTypes={["nav-forward"]}
           className="pointer-events-auto -mr-[0.35em] text-[13px] font-medium tracking-[0.35em] text-neutral-900 transition-opacity duration-200 hover:opacity-40"
         >
           SHOP

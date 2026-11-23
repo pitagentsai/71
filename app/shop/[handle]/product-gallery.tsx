@@ -47,7 +47,7 @@ export function ProductGallery({ images, title }: { images: Image[]; title: stri
             type="button"
             onClick={prev}
             aria-label="Previous photo"
-            className="absolute left-0 top-1/2 -translate-y-1/2 px-3 py-6 text-lg transition-opacity hover:opacity-40"
+            className="absolute left-0 top-1/2 -translate-y-1/2 px-3 py-6 text-lg transition-[opacity,transform] hover:opacity-40 active:-translate-x-1"
           >
             ←
           </button>
@@ -55,7 +55,7 @@ export function ProductGallery({ images, title }: { images: Image[]; title: stri
             type="button"
             onClick={next}
             aria-label="Next photo"
-            className="absolute right-0 top-1/2 -translate-y-1/2 px-3 py-6 text-lg transition-opacity hover:opacity-40"
+            className="absolute right-0 top-1/2 -translate-y-1/2 px-3 py-6 text-lg transition-[opacity,transform] hover:opacity-40 active:translate-x-1"
           >
             →
           </button>
@@ -66,7 +66,7 @@ export function ProductGallery({ images, title }: { images: Image[]; title: stri
                 type="button"
                 onClick={() => embla?.scrollTo(i)}
                 aria-label={`Photo ${i + 1}`}
-                className={`h-1.5 w-1.5 rounded-full transition-colors ${i === index ? "bg-neutral-900" : "bg-neutral-300"}`}
+                className={`h-1.5 rounded-full transition-all duration-300 ${i === index ? "w-5 bg-neutral-900" : "w-1.5 bg-neutral-300"}`}
               />
             ))}
           </div>

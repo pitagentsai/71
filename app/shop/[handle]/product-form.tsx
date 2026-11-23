@@ -34,11 +34,11 @@ export function ProductForm({ product }: { product: Product }) {
 
   return (
     <form action={addToCart} className="mt-2 flex w-full flex-col items-center text-center">
-      <p className="text-sm">{formatMoney(price.amount, price.currencyCode)}</p>
+      <p className="text-sm tabular-nums md:text-base">{formatMoney(price.amount, price.currencyCode)}</p>
 
       {options.map((option) => (
         <fieldset key={option.name} className="mt-8">
-          <legend className="mb-3 text-[11px] uppercase tracking-wider text-neutral-500">{option.name}</legend>
+          <legend className="mx-auto mb-3 font-medium text-[11px] uppercase tracking-[0.3em] text-neutral-500">{option.name}</legend>
           <div className="flex flex-wrap justify-center gap-2">
             {option.values.map((value) => {
               const active = selected[option.name] === value
@@ -48,7 +48,7 @@ export function ProductForm({ product }: { product: Product }) {
                   key={value}
                   type="button"
                   onClick={() => setSelected((s) => ({ ...s, [option.name]: value }))}
-                  className={`min-w-11 rounded border px-3 py-2 text-xs transition-colors ${
+                  className={`min-w-11 rounded border px-3 py-2 text-xs font-medium transition-[color,background-color,border-color,transform] duration-200 active:scale-95 ${
                     active ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-300 hover:border-neutral-900"
                   } ${available ? "" : "text-neutral-400 line-through"}`}
                 >
@@ -72,7 +72,7 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
     <button
       type="submit"
       disabled={disabled || pending}
-      className="mt-8 w-full rounded bg-neutral-900 px-4 py-3 text-xs uppercase tracking-wider text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:bg-neutral-400"
+      className="mt-8 w-full rounded bg-neutral-900 px-4 py-3.5 font-medium text-[12px] uppercase tracking-[0.3em] text-white transition-[opacity,transform] duration-200 hover:opacity-80 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-neutral-400"
     >
       {disabled ? "Sold out" : pending ? "Adding…" : "Add to cart"}
     </button>

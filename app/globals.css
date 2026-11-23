@@ -582,3 +582,47 @@
     opacity: 0.32;
   }
 }
+
+/* ---------- Motion ----------
+   Less is more: plain fades everywhere, and going back is instant.
+*/
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Back navigation: no animation at all */
+:root:active-view-transition-type(nav-back)::view-transition-group(*),
+:root:active-view-transition-type(nav-back)::view-transition-old(*),
+:root:active-view-transition-type(nav-back)::view-transition-new(*) {
+  animation: none !important;
+}
+
+/* Page changes: simple crossfade */
+::view-transition-old(root),
+::view-transition-old(.page-out),
+::view-transition-old(.line-out) {
+  animation: 250ms ease-out both mo-fade-out;
+}
+::view-transition-new(root),
+::view-transition-new(.page-in) {
+  animation: 400ms ease-out both mo-fade-in;
+}
+
+/* Remaining cart lines glide up when one is removed */
+::view-transition-group(.cart-line) {
+  animation-duration: 600ms;
+  animation-timing-function: var(--ease-out);
+}
+
+@keyframes mo-fade-in { from { opacity: 0; } }
+@keyframes mo-fade-out { to { opacity: 0; } }
+
+/* First load of a shop page */
+.mo-fade { animation: mo-fade-in 500ms ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+  .mo-fade { animation: none; }
+}

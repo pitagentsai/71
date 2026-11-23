@@ -1,11 +1,9 @@
 import type React from "react"
 import Link from "next/link"
-import { Space_Mono } from "next/font/google"
 import { ShoppingBag } from "lucide-react"
 import { getCart, shopifyConfigured } from "@/lib/shopify"
 import { getCartId } from "./actions"
-
-const mono = Space_Mono({ subsets: ["latin", "latin-ext"], weight: ["400", "700"] })
+import { LOGO_HEADER_CLASS, SiteLogo } from "@/components/site-logo"
 
 export const metadata = { title: "setteuno" }
 
@@ -21,35 +19,36 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
   const count = await cartCount()
 
   return (
-    <div className={`${mono.className} flex min-h-[100svh] flex-col bg-white text-neutral-900`}>
-      <header className="flex flex-col items-center gap-6 pt-10 md:pt-12">
-        <Link href="/" aria-label="STRADA home">
-          <img
-            src="/strada-logo.png"
-            alt="STRADA"
-            className="h-28 w-28 select-none object-contain md:h-40 md:w-40"
-            style={{ filter: "invert(1)", mixBlendMode: "multiply", transform: "translateX(1.56%)" }}
-          />
+    <div className="flex min-h-[100svh] flex-col bg-white font-sans text-neutral-900">
+      <header className={`${LOGO_HEADER_CLASS} gap-3`}>
+        <Link href="/" aria-label="STRADA home" transitionTypes={["nav-back"]} className="block">
+          <SiteLogo />
         </Link>
-        <nav className="flex items-center gap-8 text-[11px] uppercase tracking-wider">
-          <Link href="/shop" className="transition-opacity hover:opacity-40">
+        <nav className="flex items-center gap-10 font-medium text-[13px] uppercase tracking-[0.35em]">
+          <Link href="/shop" transitionTypes={["nav-back"]} className="py-1 transition-opacity hover:opacity-40">
             Shop
           </Link>
-          <Link href="/shop/cart" className="relative flex flex-col items-center gap-1 transition-opacity hover:opacity-40">
-            <ShoppingBag className="h-4 w-4" strokeWidth={1.5} />
-            <span>Cart</span>
-            {count > 0 && (
-              <span className="absolute -right-3 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-neutral-900 px-1 text-[9px] text-white">
-                {count}
-              </span>
-            )}
+          <Link href="/shop/cart" transitionTypes={["nav-forward"]} className="flex items-center gap-1.5 py-1 transition-opacity hover:opacity-40">
+            <ShoppingBag className="h-3.5 w-3.5" strokeWidth={1.5} />
+            <span className="overflow-hidden">
+              Cart
+              {count > 0 && (
+                <>
+                  {" ("}
+                  <span key={count} className="mo-fade">
+                    {count}
+                  </span>
+                  {")"}
+                </>
+              )}
+            </span>
           </Link>
         </nav>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-16 md:px-8">{children}</main>
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-8 md:px-8 md:pt-10">{children}</main>
 
-      <footer className="border-t border-neutral-200 px-4 py-8 text-center text-[11px] uppercase tracking-wider text-neutral-500">
+      <footer className="border-t border-neutral-200 px-4 py-8 text-center font-medium text-[11px] uppercase tracking-[0.3em] text-neutral-500">
         © {new Date().getFullYear()} STRADA
       </footer>
     </div>
