@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
-import dynamic from "next/dynamic"
 import { Instagram, Youtube } from "lucide-react"
 
 // External destinations
@@ -16,13 +15,13 @@ const LIFESTYLE_PHOTOS = [
   "/lifestyle/08.jpeg",
 ]
 
-// 3D white-stone logo still life (WebGL, client only)
-const StoneLogoScene = dynamic(() => import("@/components/stone-logo-scene"), { ssr: false })
-
-const NAV_LINK =
-  "pointer-events-auto -mr-[0.35em] text-[13px] font-medium tracking-[0.35em] text-neutral-900 transition-opacity duration-200 hover:opacity-40"
-const SOCIAL_LINK =
-  "fixed bottom-6 z-30 text-neutral-900 transition-opacity duration-200 hover:opacity-40 md:bottom-8"
+const STRADA_LOGO_STYLE = {
+  filter: "invert(1)",
+  mixBlendMode: "multiply" as const,
+  // The snake artwork is offset left inside its source PNG; nudge right so its
+  // visual center lands on the exact page center (scales with the logo size).
+  transform: "translateX(1.56%)",
+}
 
 export default function Home() {
   const [lifestyleOpen, setLifestyleOpen] = useState(false)
@@ -61,23 +60,33 @@ export default function Home() {
   }, [lifestyleOpen, next, prev, closeLifestyle])
 
   return (
-    <main className="relative h-[100svh] overflow-hidden bg-[#f7f5f1] text-neutral-900">
-      {/* STRADA logo as a white stone relic lying on a seamless white floor */}
-      <div className="absolute inset-0">
-        <StoneLogoScene />
-      </div>
+    <main className="relative flex min-h-[100svh] flex-col bg-white text-neutral-900">
+      {/* STRADA logo — top center */}
+      <header className="flex justify-center pt-10 md:pt-12">
+        <img
+          src="/strada-logo.png"
+          alt="STRADA"
+          className="h-28 w-28 select-none object-contain md:h-40 md:w-40"
+          style={STRADA_LOGO_STYLE}
+        />
+      </header>
 
-      <h1 className="sr-only">STRADA</h1>
-
-      {/* Nav — SHOP / LIFESTYLE, below the logo */}
-      <nav className="pointer-events-none absolute inset-x-0 bottom-[10%] flex flex-col items-center gap-6">
-        <Link href="/shop" className={NAV_LINK}>
+      {/* Center nav — SHOP / LIFESTYLE, centered in the full viewport */}
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-7">
+        <Link
+          href="/shop"
+          className="pointer-events-auto -mr-[0.35em] text-[13px] font-medium tracking-[0.35em] text-neutral-900 transition-opacity duration-200 hover:opacity-40"
+        >
           SHOP
         </Link>
-        <button type="button" onClick={openLifestyle} className={NAV_LINK}>
+        <button
+          type="button"
+          onClick={openLifestyle}
+          className="pointer-events-auto -mr-[0.35em] text-[13px] font-medium tracking-[0.35em] text-neutral-900 transition-opacity duration-200 hover:opacity-40"
+        >
           LIFESTYLE
         </button>
-      </nav>
+      </div>
 
       {/* Corner social buttons — minimalistic, matched styling */}
       <a
@@ -85,7 +94,7 @@ export default function Home() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="YouTube"
-        className={`${SOCIAL_LINK} left-6 md:left-8`}
+        className="fixed bottom-6 left-6 z-30 text-neutral-900 transition-opacity duration-200 hover:opacity-40 md:bottom-8 md:left-8"
       >
         <Youtube className="h-5 w-5" strokeWidth={1.5} />
       </a>
@@ -94,7 +103,7 @@ export default function Home() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Instagram"
-        className={`${SOCIAL_LINK} right-6 md:right-8`}
+        className="fixed bottom-6 right-6 z-30 text-neutral-900 transition-opacity duration-200 hover:opacity-40 md:bottom-8 md:right-8"
       >
         <Instagram className="h-5 w-5" strokeWidth={1.5} />
       </a>
