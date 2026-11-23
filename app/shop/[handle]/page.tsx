@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { getProduct, shopifyConfigured } from "@/lib/shopify"
 import { NotConfigured } from "../not-configured"
 import { ProductForm } from "./product-form"
+import { ProductGallery } from "./product-gallery"
 
 export const dynamic = "force-dynamic"
 
@@ -21,14 +22,10 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
         ← Back
       </Link>
 
-      <div className="mt-8 grid gap-10 md:grid-cols-2 md:gap-16">
-        <div className="flex flex-col gap-4">
-          {images.map((img, i) => (
-            <img key={img.url} src={img.url} alt={img.altText ?? `${product.title} ${i + 1}`} className="w-full object-contain" />
-          ))}
-        </div>
+      <div className="mt-8 grid gap-10 md:grid-cols-2 md:items-center md:gap-16">
+        <ProductGallery images={images} title={product.title} />
 
-        <div className="mx-auto flex w-full max-w-sm flex-col items-center text-center md:sticky md:top-10 md:self-start">
+        <div className="mx-auto flex w-full max-w-sm flex-col items-center text-center md:mt-16">
           <h1 className="text-sm font-bold uppercase md:text-base">{product.title}</h1>
           <ProductForm product={product} />
           {product.descriptionHtml && (
