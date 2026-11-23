@@ -7,7 +7,7 @@ import { getCartId } from "./actions"
 
 const mono = Space_Mono({ subsets: ["latin", "latin-ext"], weight: ["400", "700"] })
 
-export const metadata = { title: "STRADA — SHOP" }
+export const metadata = { title: "setteuno" }
 
 async function cartCount() {
   if (!shopifyConfigured) return 0

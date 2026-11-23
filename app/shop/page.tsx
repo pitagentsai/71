@@ -20,9 +20,12 @@ export default async function ShopPage() {
   if (!products.length) return <p className="text-center text-sm text-neutral-500">No products yet.</p>
 
   return (
-    <div className="grid grid-cols-2 gap-x-4 gap-y-14 md:grid-cols-3 md:gap-x-10">
+    // 2 per row; flex-wrap + justify-center puts an odd last item in the middle
+    <div className="mx-auto flex max-w-4xl flex-wrap justify-center gap-x-4 gap-y-14 md:gap-x-10">
       {products.map((p) => (
-        <ProductCard key={p.id} product={p} />
+        <div key={p.id} className="w-[calc(50%-0.5rem)] md:w-[calc(50%-1.25rem)]">
+          <ProductCard product={p} />
+        </div>
       ))}
     </div>
   )
@@ -31,8 +34,8 @@ export default async function ShopPage() {
 function ProductCard({ product }: { product: Product }) {
   const href = `/shop/${product.handle}`
   return (
-    <div className="flex flex-col">
-      <Link href={href} className="block aspect-square overflow-hidden bg-white">
+    <div className="flex flex-col items-center text-center">
+      <Link href={href} className="block aspect-square w-full overflow-hidden bg-white">
         {product.featuredImage && (
           <img
             src={product.featuredImage.url}
@@ -48,7 +51,7 @@ function ProductCard({ product }: { product: Product }) {
       <p className="mt-1 text-[11px] md:text-xs">{formatMoney(product.priceRange.minVariantPrice)}</p>
       <Link
         href={href}
-        className={`mt-3 self-start rounded px-3 py-2 text-[10px] text-white transition-opacity hover:opacity-80 md:text-[11px] ${
+        className={`mt-3 rounded px-3 py-2 text-[10px] text-white transition-opacity hover:opacity-80 md:text-[11px] ${
           product.availableForSale ? "bg-neutral-900" : "bg-neutral-400"
         }`}
       >

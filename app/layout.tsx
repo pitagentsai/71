@@ -13,21 +13,21 @@ const roboto = Roboto({
 })
 
 export const metadata: Metadata = {
-  title: "STRADA",
-  description: "STRADA",
+  title: "setteuno",
+  description: "setteuno",
   generator: "v0.app",
   icons: {
     icon: "/strada-logo.png",
   },
   openGraph: {
-    title: "STRADA",
-    description: "STRADA",
+    title: "setteuno",
+    description: "setteuno",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "STRADA",
-    description: "STRADA",
+    title: "setteuno",
+    description: "setteuno",
   },
 }
 

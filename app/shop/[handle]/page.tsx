@@ -28,7 +28,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
           ))}
         </div>
 
-        <div className="md:sticky md:top-10 md:self-start">
+        <div className="mx-auto flex w-full max-w-sm flex-col items-center text-center md:sticky md:top-10 md:self-start">
           <h1 className="text-sm font-bold uppercase md:text-base">{product.title}</h1>
           <ProductForm product={product} />
           {product.descriptionHtml && (

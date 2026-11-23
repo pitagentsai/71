@@ -33,13 +33,13 @@ export function ProductForm({ product }: { product: Product }) {
   const price = variant?.price ?? product.priceRange.minVariantPrice
 
   return (
-    <form action={addToCart} className="mt-2">
+    <form action={addToCart} className="mt-2 flex w-full flex-col items-center text-center">
       <p className="text-sm">{formatMoney(price.amount, price.currencyCode)}</p>
 
       {options.map((option) => (
         <fieldset key={option.name} className="mt-8">
           <legend className="mb-3 text-[11px] uppercase tracking-wider text-neutral-500">{option.name}</legend>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap justify-center gap-2">
             {option.values.map((value) => {
               const active = selected[option.name] === value
               const available = isAvailable(option.name, value)
