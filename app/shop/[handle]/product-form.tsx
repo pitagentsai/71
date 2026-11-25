@@ -4,6 +4,7 @@ import * as React from "react"
 import { useMemo, useState } from "react"
 import { useFormStatus } from "react-dom"
 import type { Product } from "@/lib/shopify"
+import { variantFor, variantStock } from "@/lib/stock"
 import { addToCart, type CartActionState } from "../actions"
 
 // Bundled React canary has useActionState; the installed @types/react (v18) doesn't declare it yet
@@ -29,12 +30,12 @@ export function ProductForm({ product }: { product: Product }) {
     [product.variants, selected],
   )
 
-  const isAvailable = (name: string, value: string) =>
-    product.variants.some(
-      (v) =>
-        v.availableForSale &&
-        v.selectedOptions.every((o) => (o.name === name ? o.value === value : selected[o.name] === o.value)),
-    )
+  // Stock level of each option value given the other selections ("out" sizes can't be picked)
+  const levelOf = (name: string, value: string) => {
+    const v = variantFor(product, name, value, selected)
+    return v ? variantStock(v) : "out"
+  }
+  const selectedLow = Boolean(variant && variantStock(variant) === "low")
 
   const price = variant?.price ?? product.priceRange.minVariantPrice
   const [state, formAction] = useActionState<CartActionState>(addToCart, { error: null })
@@ -49,23 +50,37 @@ export function ProductForm({ product }: { product: Product }) {
           <div className="flex flex-wrap justify-center gap-2">
             {option.values.map((value) => {
               const active = selected[option.name] === value
-              const available = isAvailable(option.name, value)
+              const level = levelOf(option.name, value)
+              const out = level === "out"
               return (
                 <button
                   key={value}
                   type="button"
+                  disabled={out}
+                  aria-label={out ? `${value}, sold out` : level === "low" ? `${value}, low stock` : value}
                   onClick={() => setSelected((s) => ({ ...s, [option.name]: value }))}
-                  className={`min-w-11 rounded border px-3 py-2 text-xs font-medium transition-[color,background-color,border-color,transform] duration-200 active:scale-95 ${
-                    active ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-300 hover:border-neutral-900"
-                  } ${available ? "" : "text-neutral-400 line-through"}`}
+                  className={`relative min-w-11 rounded border px-3 py-2 text-xs font-medium transition-[color,background-color,border-color,transform] duration-200 ${
+                    out
+                      ? "cursor-not-allowed border-neutral-200 text-neutral-300 line-through"
+                      : active
+                        ? "border-neutral-900 bg-neutral-900 text-white active:scale-95"
+                        : "border-neutral-300 hover:border-neutral-900 active:scale-95"
+                  }`}
                 >
                   {value}
+                  {level === "low" && (
+                    <span aria-hidden className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-red-600 ring-2 ring-white" />
+                  )}
                 </button>
               )
             })}
           </div>
         </fieldset>
       ))}
+
+      {selectedLow && (
+        <p className="mt-4 text-[11px] font-medium uppercase tracking-[0.25em] text-red-600">Low stock</p>
+      )}
 
       <input type="hidden" name="variantId" value={variant?.id ?? ""} />
       <SubmitButton disabled={!variant?.availableForSale} />

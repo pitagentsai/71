@@ -2,6 +2,7 @@ import Link from "next/link"
 import { CD_COVER_CLASS, formatMoney, getProducts, isCd, shopifyConfigured, type Product } from "@/lib/shopify"
 import { NotConfigured } from "./not-configured"
 import { PageTransition } from "@/components/view-transition"
+import { productStock, variantFor, variantStock } from "@/lib/stock"
 
 export const dynamic = "force-dynamic"
 
@@ -38,6 +39,7 @@ const EASE = "ease-[cubic-bezier(0.16,1,0.3,1)]"
 
 function ProductCard({ product }: { product: Product }) {
   const href = `/shop/${product.handle}`
+  const stock = productStock(product)
 
   return (
     <div className="group flex flex-col items-center text-center">
@@ -50,17 +52,18 @@ function ProductCard({ product }: { product: Product }) {
           <img
             src={product.featuredImage.url}
             alt={product.featuredImage.altText ?? product.title}
-            className={`h-full w-full object-contain transition-transform duration-700 ${EASE} group-hover:scale-[1.03] ${isCd(product.title) ? CD_COVER_CLASS : ""}`}
+            className={`h-full w-full object-contain transition-transform duration-700 ${EASE} group-hover:scale-[1.03] ${isCd(product.title) ? CD_COVER_CLASS : ""} ${stock === "out" ? "opacity-50" : ""}`}
             loading="lazy"
           />
         )}
       </Link>
 
       <div className="flex flex-col items-center">
+        <StockLabel level={stock} />
         <Link
           href={href}
           transitionTypes={["nav-forward"]}
-          className="mt-2.5 font-medium text-[11px] uppercase leading-snug tracking-[0.12em] md:text-[13px]"
+          className="mt-1 font-medium text-[11px] uppercase leading-snug tracking-[0.12em] md:text-[13px]"
         >
           {product.title}
         </Link>
@@ -82,32 +85,42 @@ function ProductCard({ product }: { product: Product }) {
 
 const SIZE_OPTION = /^(size|rozmiar|größe|taille|talla)$/i
 
-// Sizes at a glance: in-stock sizes solid, sold-out sizes faded and struck through
+// Above the product name: SOLD OUT / LOW STOCK (empty line keeps cards aligned when in stock)
+function StockLabel({ level }: { level: "out" | "low" | "in" }) {
+  return (
+    <span
+      className={`mt-2.5 h-3.5 text-[10px] font-medium uppercase leading-none tracking-[0.25em] ${
+        level === "low" ? "text-red-600" : "text-neutral-400"
+      }`}
+    >
+      {level === "out" ? "Sold out" : level === "low" ? "Low stock" : ""}
+    </span>
+  )
+}
+
+// Sizes at a glance: sold-out sizes faded and struck through, low-stock sizes marked with a red dot
 function SizePreview({ product }: { product: Product }) {
   const option =
     product.options.find((o) => SIZE_OPTION.test(o.name)) ??
     product.options.find((o) => o.values.length > 1)
   if (!option) return null
 
-  const inStock = (size: string) =>
-    product.variants.some(
-      (v) => v.availableForSale && v.selectedOptions.some((o) => o.name === option.name && o.value === size),
-    )
-
   return (
     <ul className="mt-1.5 flex flex-wrap justify-center gap-1" aria-label={`${option.name} availability`}>
       {option.values.map((size) => {
-        const available = inStock(size)
+        const v = variantFor(product, option.name, size)
+        const level = v ? variantStock(v) : "out"
         return (
           <li
             key={size}
-            title={available ? `${size}: in stock` : `${size}: sold out`}
-            className={`min-w-6 rounded-sm border px-1.5 py-0.5 text-[10px] font-medium leading-none tabular-nums md:text-[11px] ${
-              available ? "border-neutral-400 text-neutral-900" : "border-neutral-200 text-neutral-300 line-through"
+            title={level === "out" ? `${size}: sold out` : level === "low" ? `${size}: low stock` : `${size}: in stock`}
+            className={`relative min-w-6 rounded-sm border px-1.5 py-0.5 text-[10px] font-medium leading-none tabular-nums md:text-[11px] ${
+              level === "out" ? "border-neutral-200 text-neutral-300 line-through" : "border-neutral-400 text-neutral-900"
             }`}
           >
-            <span className="sr-only">{available ? "" : "Sold out: "}</span>
+            <span className="sr-only">{level === "out" ? "Sold out: " : level === "low" ? "Low stock: " : ""}</span>
             {size}
+            {level === "low" && <span aria-hidden className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-red-600" />}
           </li>
         )
       })}

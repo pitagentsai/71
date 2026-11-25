@@ -1,4 +1,5 @@
 import "server-only"
+import { LOW_STOCK_PRODUCT, LOW_STOCK_SIZE } from "./stock"
 
 // Shopify Storefront API client (server-side only — the private token must never reach the browser).
 const domain = process.env.SHOPIFY_STORE_DOMAIN?.replace(/^https?:\/\//, "").replace(/\/$/, "")
@@ -16,6 +17,8 @@ export type Variant = {
   availableForSale: boolean
   price: Money
   selectedOptions: { name: string; value: string }[]
+  /** Few units left. Only this flag is sent to the browser; real stock counts never leave the server. */
+  lowStock?: boolean
 }
 
 export type Product = {
@@ -30,6 +33,8 @@ export type Product = {
   priceRange: { minVariantPrice: Money }
   options: { name: string; values: string[] }[]
   variants: Variant[]
+  /** Few units left across all sizes (see lib/stock.ts) */
+  lowStock?: boolean
 }
 
 export type CartLine = {
@@ -146,7 +151,7 @@ export async function getProducts(first = 50): Promise<Product[]> {
     `query Products($first: Int!) { products(first: $first, sortKey: CREATED_AT, reverse: true) { edges { node { ${PRODUCT_FIELDS} } } } }`,
     { first },
   )
-  return sortByCategory(nodes(data.products).map(normalizeProduct))
+  return withStock(sortByCategory(nodes(data.products).map(normalizeProduct)))
 }
 
 // Shop display order. Shopify has no reliable type/tags on these products, so the
@@ -176,7 +181,54 @@ export async function getProduct(handle: string): Promise<Product | null> {
     `query Product($handle: String!) { product(handle: $handle) { ${PRODUCT_FIELDS} } }`,
     { handle },
   )
-  return data.product ? normalizeProduct(data.product) : null
+  if (!data.product) return null
+  const [product] = await withStock([normalizeProduct(data.product)])
+  return product
+}
+
+// ---------- Stock levels ----------
+
+// Stock counts need the `unauthenticated_read_product_inventory` Storefront scope. They're fetched
+// in a separate query so that, without the scope, products still load (just without low-stock info).
+let stockDeniedUntil = 0
+
+async function withStock(products: Product[]): Promise<Product[]> {
+  const ids = products.flatMap((p) => p.variants.map((v) => v.id))
+  if (!ids.length || Date.now() < stockDeniedUntil) return products
+  try {
+    const data = await shopifyFetch<{ nodes: ({ id: string; quantityAvailable: number | null } | null)[] }>(
+      `query Stock($ids: [ID!]!) { nodes(ids: $ids) { ... on ProductVariant { id quantityAvailable } } }`,
+      { ids },
+    )
+    const qty = new Map(data.nodes.filter(Boolean).map((n) => [n!.id, n!.quantityAvailable]))
+    // Turn counts into yes/no flags here so the numbers are never sent to the browser
+    return products.map((p) => {
+      const counts = p.variants.filter((v) => v.availableForSale).map((v) => qty.get(v.id))
+      const known = counts.length > 0 && counts.every((n) => typeof n === "number")
+      const total = known ? (counts as number[]).reduce((a, b) => a + Math.max(0, b), 0) : null
+      return {
+        ...p,
+        lowStock: total !== null && total > 0 && total <= LOW_STOCK_PRODUCT,
+        variants: p.variants.map((v) => {
+          const n = qty.get(v.id)
+          return { ...v, lowStock: v.availableForSale && typeof n === "number" && n > 0 && n <= LOW_STOCK_SIZE }
+        }),
+      }
+    })
+  } catch (e) {
+    if (String(e).includes("ACCESS_DENIED")) stockDeniedUntil = Date.now() + 5 * 60_000 // don't retry every request
+    else console.error("Stock lookup failed:", e)
+    return products
+  }
+}
+
+/** Live check right before adding to cart */
+export async function isVariantAvailable(variantId: string): Promise<boolean> {
+  const data = await shopifyFetch<{ node: { availableForSale?: boolean } | null }>(
+    `query Avail($id: ID!) { node(id: $id) { ... on ProductVariant { availableForSale } } }`,
+    { id: variantId },
+  )
+  return Boolean(data.node?.availableForSale)
 }
 
 // ---------- Cart ----------

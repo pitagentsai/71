@@ -599,8 +599,7 @@
 
 /* Page changes: simple crossfade */
 ::view-transition-old(root),
-::view-transition-old(.page-out),
-::view-transition-old(.line-out) {
+::view-transition-old(.page-out) {
   animation: 250ms ease-out both mo-fade-out;
 }
 ::view-transition-new(root),
@@ -608,11 +607,6 @@
   animation: 400ms ease-out both mo-fade-in;
 }
 
-/* Remaining cart lines glide up when one is removed */
-::view-transition-group(.cart-line) {
-  animation-duration: 600ms;
-  animation-timing-function: var(--ease-out);
-}
 
 @keyframes mo-fade-in { from { opacity: 0; } }
 @keyframes mo-fade-out { to { opacity: 0; } }

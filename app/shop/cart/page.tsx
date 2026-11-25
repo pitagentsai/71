@@ -1,8 +1,9 @@
 import Link from "next/link"
 import { CD_COVER_CLASS, formatMoney, getCart, isCd, shopifyConfigured } from "@/lib/shopify"
 import { NotConfigured } from "../not-configured"
-import { changeQuantity, getCartId, removeFromCart } from "../actions"
-import { PageTransition, ViewTransition } from "@/components/view-transition"
+import { getCartId } from "../actions"
+import { PageTransition } from "@/components/view-transition"
+import { CartLineControls } from "./line-controls"
 
 export const dynamic = "force-dynamic"
 
@@ -40,9 +41,7 @@ export default async function CartPage() {
           const { product } = line.merchandise
           const variantTitle = line.merchandise.title === "Default Title" ? null : line.merchandise.title
           return (
-            // A removed line fades out and the lines below glide up into its place
-            <ViewTransition key={line.id} name={`cart-line-${line.id}`} exit="line-out" update="cart-line" share="cart-line" default="none">
-            <li className="flex gap-4 py-6">
+            <li key={line.id} className="flex gap-4 py-6">
               <Link href={`/shop/${product.handle}`} transitionTypes={["nav-back"]} className="h-24 w-24 shrink-0">
                 {product.featuredImage && (
                   <img src={product.featuredImage.url} alt={product.title} className={`h-full w-full object-contain ${isCd(product.title) ? CD_COVER_CLASS : ""}`} />
@@ -53,19 +52,10 @@ export default async function CartPage() {
                   {product.title}
                 </Link>
                 {variantTitle && <span className="text-neutral-500">{variantTitle}</span>}
-                <div className="mt-auto flex items-center gap-3">
-                  <QtyButton lineId={line.id} quantity={line.quantity - 1} label="−" />
-                  <span key={line.quantity} className="mo-fade min-w-4 text-center tabular-nums">{line.quantity}</span>
-                  <QtyButton lineId={line.id} quantity={line.quantity + 1} label="+" />
-                  <form action={removeFromCart} className="ml-4">
-                    <input type="hidden" name="lineId" value={line.id} />
-                    <button className="font-medium text-[10px] uppercase tracking-[0.25em] text-neutral-500 underline underline-offset-4 transition-colors hover:text-neutral-900">Remove</button>
-                  </form>
-                </div>
+                <CartLineControls lineId={line.id} quantity={line.quantity} />
               </div>
               <span className="text-sm tabular-nums">{formatMoney(line.cost.totalAmount)}</span>
             </li>
-            </ViewTransition>
           )
         })}
       </ul>
@@ -84,17 +74,5 @@ export default async function CartPage() {
       </a>
     </div>
     </PageTransition>
-  )
-}
-
-function QtyButton({ lineId, quantity, label }: { lineId: string; quantity: number; label: string }) {
-  return (
-    <form action={changeQuantity}>
-      <input type="hidden" name="lineId" value={lineId} />
-      <input type="hidden" name="quantity" value={quantity} />
-      <button className="flex h-7 w-7 items-center justify-center rounded border border-neutral-300 transition-[border-color,transform] hover:border-neutral-900 active:scale-90">
-        {label}
-      </button>
-    </form>
   )
 }
