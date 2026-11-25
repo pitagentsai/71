@@ -5,7 +5,7 @@ import useEmblaCarousel from "embla-carousel-react"
 
 type Image = { url: string; altText: string | null }
 
-export function ProductGallery({ images, title }: { images: Image[]; title: string }) {
+export function ProductGallery({ images, title, coverClass = "" }: { images: Image[]; title: string; coverClass?: string }) {
   const [emblaRef, embla] = useEmblaCarousel({ loop: images.length > 1 })
   const [index, setIndex] = useState(0)
 
@@ -33,7 +33,7 @@ export function ProductGallery({ images, title }: { images: Image[]; title: stri
               <img
                 src={img.url}
                 alt={img.altText ?? `${title} ${i + 1}`}
-                className="h-full w-full select-none object-contain"
+                className={`h-full w-full select-none object-contain ${coverClass}`}
                 draggable={false}
               />
             </div>

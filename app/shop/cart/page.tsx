@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { formatMoney, getCart, shopifyConfigured } from "@/lib/shopify"
+import { CD_COVER_CLASS, formatMoney, getCart, isCd, shopifyConfigured } from "@/lib/shopify"
 import { NotConfigured } from "../not-configured"
 import { changeQuantity, getCartId, removeFromCart } from "../actions"
 import { PageTransition, ViewTransition } from "@/components/view-transition"
@@ -45,7 +45,7 @@ export default async function CartPage() {
             <li className="flex gap-4 py-6">
               <Link href={`/shop/${product.handle}`} transitionTypes={["nav-back"]} className="h-24 w-24 shrink-0">
                 {product.featuredImage && (
-                  <img src={product.featuredImage.url} alt={product.title} className="h-full w-full object-contain" />
+                  <img src={product.featuredImage.url} alt={product.title} className={`h-full w-full object-contain ${isCd(product.title) ? CD_COVER_CLASS : ""}`} />
                 )}
               </Link>
               <div className="flex flex-1 flex-col gap-1 text-sm">

@@ -228,6 +228,13 @@ export async function removeCartLine(cartId: string, lineId: string): Promise<Ca
 
 // ---------- Helpers ----------
 
+// CDs (and other music formats) have full-bleed square cover art instead of a product shot on
+// white, so they get shown smaller with a shadow to sit at a realistic scale next to clothing.
+export const isCd = (title: string) => /\b(CD|VINYL|LP|CASSETTE|TAPE)\b/i.test(title)
+
+// Classes for a CD cover inside a square frame: ~60% of the frame, centered, soft drop shadow
+export const CD_COVER_CLASS = "p-[20%] drop-shadow-[0_10px_18px_rgba(0,0,0,0.22)]"
+
 export function formatMoney({ amount, currencyCode }: Money) {
   return new Intl.NumberFormat("pl-PL", { style: "currency", currency: currencyCode }).format(Number(amount))
 }

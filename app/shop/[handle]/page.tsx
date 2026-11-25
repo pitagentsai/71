@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { getProduct, shopifyConfigured } from "@/lib/shopify"
+import { CD_COVER_CLASS, getProduct, isCd, shopifyConfigured } from "@/lib/shopify"
 import { NotConfigured } from "../not-configured"
 import { ProductForm } from "./product-form"
 import { ProductGallery } from "./product-gallery"
@@ -24,7 +24,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
       </Link>
 
       <div className="mt-8 grid gap-10 md:grid-cols-2 md:items-center md:gap-16">
-        <ProductGallery images={images} title={product.title} />
+        <ProductGallery images={images} title={product.title} coverClass={isCd(product.title) ? CD_COVER_CLASS : ""} />
 
         <div className="mo-fade mx-auto flex w-full max-w-sm flex-col items-center text-center md:mt-16">
           <h1 className="font-medium text-xs uppercase leading-relaxed tracking-[0.12em] md:text-sm">{product.title}</h1>

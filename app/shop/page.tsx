@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { formatMoney, getProducts, shopifyConfigured, type Product } from "@/lib/shopify"
+import { CD_COVER_CLASS, formatMoney, getProducts, isCd, shopifyConfigured, type Product } from "@/lib/shopify"
 import { NotConfigured } from "./not-configured"
 import { PageTransition } from "@/components/view-transition"
 
@@ -50,7 +50,7 @@ function ProductCard({ product }: { product: Product }) {
           <img
             src={product.featuredImage.url}
             alt={product.featuredImage.altText ?? product.title}
-            className={`h-full w-full object-contain transition-transform duration-700 ${EASE} group-hover:scale-[1.03]`}
+            className={`h-full w-full object-contain transition-transform duration-700 ${EASE} group-hover:scale-[1.03] ${isCd(product.title) ? CD_COVER_CLASS : ""}`}
             loading="lazy"
           />
         )}
