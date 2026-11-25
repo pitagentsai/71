@@ -54,25 +54,52 @@ export type Cart = {
 type Edges<T> = { edges: { node: T }[] }
 const nodes = <T,>(c: Edges<T>) => c.edges.map((e) => e.node)
 
+// Shopper's real IP. With a private token Shopify rate-limits (and bot-checks cartCreate) per IP;
+// without this header every request comes from Cloudflare's servers, so all shoppers share one
+// limit and cart creation gets THROTTLED under load.
+async function buyerIp(): Promise<string | undefined> {
+  try {
+    const { headers } = await import("next/headers")
+    const h = await headers()
+    return h.get("cf-connecting-ip") ?? h.get("x-real-ip") ?? h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? undefined
+  } catch {
+    return undefined // not inside a request (e.g. build time)
+  }
+}
+
+const isThrottled = (errors: unknown) => JSON.stringify(errors ?? "").includes("THROTTLED")
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
 async function shopifyFetch<T>(query: string, variables?: Record<string, unknown>, cache: RequestCache = "no-store"): Promise<T> {
   if (!shopifyConfigured) throw new Error("Shopify is not configured (SHOPIFY_STORE_DOMAIN / SHOPIFY_STOREFRONT_PRIVATE_TOKEN).")
 
-  const res = await fetch(`https://${domain}/api/${apiVersion}/graphql.json`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Shopify-Storefront-Private-Token": token!,
-    },
-    body: JSON.stringify({ query, variables }),
-    cache,
-  })
+  const ip = await buyerIp()
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "Shopify-Storefront-Private-Token": token!,
+  }
+  if (ip) headers["Shopify-Storefront-Buyer-IP"] = ip
 
-  const json = await res.json().catch(() => null)
-  if (!res.ok || !json || json.errors) {
+  // Retry briefly if Shopify throttles or has a hiccup (common during a drop)
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(`https://${domain}/api/${apiVersion}/graphql.json`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ query, variables }),
+      cache,
+    })
+    const json = await res.json().catch(() => null)
+
+    if (res.ok && json && !json.errors) return json.data as T
+
+    const retryable = res.status === 429 || res.status >= 500 || isThrottled(json?.errors)
+    if (retryable && attempt < 2) {
+      await wait(400 * (attempt + 1) + Math.random() * 300)
+      continue
+    }
     const msg = json?.errors ? JSON.stringify(json.errors) : `HTTP ${res.status}`
     throw new Error(`Shopify Storefront API error: ${msg}`)
   }
-  return json.data as T
 }
 
 // ---------- Fragments ----------

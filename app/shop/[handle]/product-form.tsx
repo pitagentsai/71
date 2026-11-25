@@ -1,9 +1,15 @@
 "use client"
 
+import * as React from "react"
 import { useMemo, useState } from "react"
 import { useFormStatus } from "react-dom"
 import type { Product } from "@/lib/shopify"
-import { addToCart } from "../actions"
+import { addToCart, type CartActionState } from "../actions"
+
+// Bundled React canary has useActionState; the installed @types/react (v18) doesn't declare it yet
+const useActionState = (React as unknown as {
+  useActionState: <S>(action: (prev: S, data: FormData) => Promise<S>, initial: S) => [S, (data: FormData) => void, boolean]
+}).useActionState
 
 function formatMoney(amount: string, currencyCode: string) {
   return new Intl.NumberFormat("pl-PL", { style: "currency", currency: currencyCode }).format(Number(amount))
@@ -31,9 +37,10 @@ export function ProductForm({ product }: { product: Product }) {
     )
 
   const price = variant?.price ?? product.priceRange.minVariantPrice
+  const [state, formAction] = useActionState<CartActionState>(addToCart, { error: null })
 
   return (
-    <form action={addToCart} className="mt-2 flex w-full flex-col items-center text-center">
+    <form action={formAction} className="mt-2 flex w-full flex-col items-center text-center">
       <p className="text-sm tabular-nums md:text-base">{formatMoney(price.amount, price.currencyCode)}</p>
 
       {options.map((option) => (
@@ -62,6 +69,11 @@ export function ProductForm({ product }: { product: Product }) {
 
       <input type="hidden" name="variantId" value={variant?.id ?? ""} />
       <SubmitButton disabled={!variant?.availableForSale} />
+      {state.error && (
+        <p role="alert" className="mt-3 text-xs text-red-600">
+          {state.error}
+        </p>
+      )}
     </form>
   )
 }
